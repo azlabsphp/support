@@ -113,7 +113,6 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, \Json
             if ((is_numeric($last) && !is_numeric($key)) || (!is_numeric($last) && is_numeric($key))) {
                 throw new \InvalidArgumentException('For performance reason collection index must be either numeric or alphanumeric, not both');
             }
-            // code...
             $this->items_[] = $value;
             if (is_numeric($key) && is_numeric($last)) {
                 $key = ++$last;
