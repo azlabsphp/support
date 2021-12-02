@@ -1,0 +1,46 @@
+{
+    "name": "drewlabs/support",
+    "description": "Utility library for creating common objects like immutable object, collection, Action creator etc...",
+    "type": "library",
+    "require-dev": {
+        "phpunit/phpunit": "^9.5"
+    },
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Drewlabs\\Support\\": "src/"
+        },
+        "files": [
+            "./src/proxies.php",
+            "./src/helpers.php"
+        ],
+        "optimize-autoloader": true
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Drewlabs\\Support\\Tests\\": "tests/"
+        }
+    },
+    "authors": [
+        {
+            "name": "azandrew-sidoine",
+            "email": "asmyns.platonnas29@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+        "php": ">=7.3",
+        "drewlabs/core-helpers": "^1.0",
+        "drewlabs/contracts": "^1.0"
+    },
+    "repositories":[
+        {
+            "type": "vcs",
+            "url": "git@github.com:liksoft/drewlabs-php-contracts.git"
+        },
+        {
+            "type": "vcs",
+            "url": "git@github.com:liksoft/drewlabs-php-core-helpers.git"
+        }
+    ]
+}
