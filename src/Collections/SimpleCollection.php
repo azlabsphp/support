@@ -13,22 +13,17 @@ declare(strict_types=1);
 
 namespace Drewlabs\Support\Collections;
 
-use ArrayIterator;
 use Drewlabs\Contracts\Support\Collections\CollectionInterface;
 use Drewlabs\Support\Collections\Traits\Enumerable;
 use Drewlabs\Support\Collections\Traits\Sortable;
 use Drewlabs\Support\Compact\PhpStdClass;
 use Drewlabs\Support\Exceptions\NotFoundException;
 use Drewlabs\Support\Traits\Overloadable;
-use InvalidArgumentException;
-use JsonSerializable;
-use MultipleIterator;
 
-/** @package Drewlabs\Support\Collections */
-final class SimpleCollection implements CollectionInterface, \ArrayAccess, JsonSerializable
+final class SimpleCollection implements CollectionInterface, \ArrayAccess, \JsonSerializable
 {
-    use Overloadable;
     use Enumerable;
+    use Overloadable;
     use Sortable;
 
     /**
@@ -45,24 +40,22 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, JsonS
 
     public function __construct($items = [])
     {
-        if (is_array($items)) {
+        if (\is_array($items)) {
             $this->setProperties($items);
-        } else if (is_object($items) && method_exists($items, 'all') && is_array($all_ = $items->all())) {
+        } elseif (\is_object($items) && method_exists($items, 'all') && \is_array($all_ = $items->all())) {
             $this->setProperties($all_);
         } else {
             $this->setProperties([]);
         }
     }
 
-    private function setProperties(array $items = [])
+    public function __clone()
     {
-        $this->items_ = new \ArrayIterator(array_values($items));
-        $this->keys_ = new \ArrayIterator(array_keys($items));
+        $this->keys_ = clone $this->keys_;
+        $this->items_ = clone $this->items_;
     }
 
     /**
-     *
-     * @param array $items
      * @return self
      */
     public static function fromArray(array $items)
@@ -73,23 +66,13 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, JsonS
     /**
      * Create a new collection instance if the value isn't one already.
      *
-     * @param  mixed  $items
+     * @param mixed $items
+     *
      * @return static
      */
     public static function make($items = [])
     {
         return new self($items);
-    }
-
-    /**
-     * Creates a lazy collection instance
-     *
-     * @param mixed|null $iterable
-     * @return LazyCollection
-     */
-    private function lazy($iterable = null)
-    {
-        return new LazyCollection($iterable ?? $this->all());
     }
 
     public function add(...$args)
@@ -107,6 +90,7 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, JsonS
                     $this->items_[] = $value;
                     $this->keys_[] = $key;
                 }
+
                 return $this;
             },
             function ($value) {
@@ -116,6 +100,7 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, JsonS
                     throw new \InvalidArgumentException('For performance reason collection index must be either numeric or alphanumeric, not both');
                 }
                 $this->keys_[] = ++$last;
+
                 return $this;
             },
         ]);
@@ -135,6 +120,7 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, JsonS
             }
             $this->keys_[] = $key;
         }
+
         return $this;
     }
 
@@ -193,22 +179,20 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, JsonS
 
     /**
      * Determine if an item exists in the collection.
-     *
-     * @param  mixed  $key
-     * @param  mixed  $operator
-     * @param  mixed  $value
-     * @return bool
      */
     public function contains(...$args): bool
     {
-        if (1 === count(($args_ = func_get_args()))) {
+        if (1 === \count(($args_ = \func_get_args()))) {
             if (drewlabs_core_is_closure($args_[0])) {
-                $default = new \stdClass;
+                $default = new \stdClass();
+
                 return $this->first($args_[0], $default) !== $default;
             }
+
             return null !== $this->get(...$args);
         }
-        return $this->contains(drewlabs_core_create_evaluation_callback(...func_get_args()));
+
+        return $this->contains(drewlabs_core_create_evaluation_callback(...\func_get_args()));
     }
 
     public function isEmpty(): bool
@@ -228,24 +212,24 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, JsonS
 
     public function toArray(): array
     {
-        return iterator_to_array((function ($internal) {
+        return iterator_to_array((static function ($internal) {
             foreach ($internal as $key => $value) {
                 yield $key => method_exists($value, 'toArray') ? $value->toArray() : $value;
             }
         })($this->all()));
     }
 
-
     /**
-     *
      * @param Closure $callback
-     * @return void
+     *
      * @throws RuntimeException
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
+     *
+     * @return void
      */
     public function each(\Closure $callback)
     {
-        $iterator = new MultipleIterator();
+        $iterator = new \MultipleIterator();
         $iterator->attachIterator($this->items_);
         $iterator->attachIterator($this->keys_);
         foreach ($iterator as $value) {
@@ -254,16 +238,16 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, JsonS
     }
 
     /**
-     * Apply the transformation callback over each item element
+     * Apply the transformation callback over each item element.
      *
      * @param \Closure|callable $callback
-     * @param bool $preserve_key
+     *
      * @return self
      */
     public function map($callback, bool $preserve_key = true)
     {
-        if (!($callback instanceof \Closure) || !is_callable($callback)) {
-            throw new InvalidArgumentException('Expect parameter 1 to be an instance of \Closure, or php callable, got : ' . gettype($callback));
+        if (!($callback instanceof \Closure) || !\is_callable($callback)) {
+            throw new \InvalidArgumentException('Expect parameter 1 to be an instance of \Closure, or php callable, got : '.\gettype($callback));
         }
 
         return new static(
@@ -276,14 +260,13 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, JsonS
     }
 
     /**
-     *
      * @param Closure $callback
-     * @param bool $preserve_key
+     *
      * @return self
      */
     public function filter(\Closure $callback, bool $preserve_key = true)
     {
-        $iterator = new MultipleIterator();
+        $iterator = new \MultipleIterator();
         $iterator->attachIterator($this->items_);
         $iterator->attachIterator($this->keys_);
         $keys = [];
@@ -300,17 +283,19 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, JsonS
                     $keys[] = $key;
                 }
                 $values[] = $current;
+
                 return true;
             },
             [$iterator]
         );
+
         return new static(array_combine($preserve_key ? $keys : array_keys($values), $values));
     }
 
     /**
-     *
-     * @param Closure $callback
+     * @param Closure    $callback
      * @param mixed|null $initial
+     *
      * @return mixed
      */
     public function reduce(\Closure $callback, $initial = null)
@@ -325,9 +310,10 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, JsonS
             if (!$this->items_->valid()) {
                 return $default instanceof \Closure ? $default() : $default;
             }
+
             return $this->items_->current();
         }
-        $callback = drewlabs_core_is_closure($value) ? $value : (function ($item) use ($value) {
+        $callback = drewlabs_core_is_closure($value) ? $value : (static function ($item) use ($value) {
             return $item === $value;
         });
         foreach ($this->items_ as $key => $value) {
@@ -335,6 +321,7 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, JsonS
                 return $value;
             }
         }
+
         return $default instanceof \Closure ? $default() : $default;
     }
 
@@ -350,16 +337,17 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, JsonS
         $last = $this->items_->current();
         // Reset the iterator pointer
         $this->items_->rewind();
+
         return $last;
     }
 
     public function combine($keys)
     {
         $keys = drewlabs_core_array_udt_to_array($keys);
-        if (count($keys) !== $this->items_->count()) {
-            throw new \InvalidArgumentException("The size of keys must equals the size of elements in the collection");
+        if (\count($keys) !== $this->items_->count()) {
+            throw new \InvalidArgumentException('The size of keys must equals the size of elements in the collection');
         }
-        $this->keys_ = new ArrayIterator($keys);
+        $this->keys_ = new \ArrayIterator($keys);
     }
 
     // #region Adding missing Illuminate collection methods
@@ -367,7 +355,8 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, JsonS
     /**
      * Count the number of items in the collection by a field or using a callback.
      *
-     * @param  callable|string  $countBy
+     * @param callable|string $countBy
+     *
      * @return static
      */
     public function countBy($countBy = null)
@@ -378,8 +367,9 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, JsonS
     /**
      * Pad collection to the specified length with a value.
      *
-     * @param  int  $size
-     * @param  mixed  $value
+     * @param int   $size
+     * @param mixed $value
+     *
      * @return static
      */
     public function pad($size, $value)
@@ -392,8 +382,8 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, JsonS
     /**
      * Zip the collection together with one or more arrays.
      *
+     * @param mixed ...$items
      *
-     * @param  mixed  ...$items
      * @return static
      */
     public function zip(...$items)
@@ -405,17 +395,19 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, JsonS
     /**
      * Return only unique items from the collection array.
      *
-     * @param  string|callable|null  $key
-     * @param  bool  $strict
+     * @param string|callable|null $key
+     * @param bool                 $strict
+     *
      * @return static
      */
     public function unique($key = null, $strict = false)
     {
         $callback = drewlabs_core_create_get_callback($key);
         $exists = [];
+
         return $this->reject(
-            function ($item, $key) use ($callback, $strict, &$exists) {
-                if (in_array($id = $callback($item, $key), $exists, $strict)) {
+            static function ($item, $key) use ($callback, $strict, &$exists) {
+                if (\in_array($id = $callback($item, $key), $exists, $strict)) {
                     return true;
                 }
                 $exists[] = $id;
@@ -426,7 +418,6 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, JsonS
     /**
      * Transform each item in the collection using a callback.
      *
-     * @param  callable  $callback
      * @return self
      */
     public function transform(callable $callback)
@@ -437,7 +428,6 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, JsonS
     /**
      * Take the first or last {$limit} items.
      *
-     * @param  int  $limit
      * @return static
      */
     public function take(int $limit)
@@ -445,13 +435,15 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, JsonS
         if ($limit < 0) {
             return $this->slice($limit, abs($limit));
         }
+
         return $this->slice(0, $limit);
     }
 
     /**
      * Take items in the collection until the given condition is met.
      *
-     * @param  mixed  $value
+     * @param mixed $value
+     *
      * @return static
      */
     public function takeUntil($value)
@@ -462,66 +454,69 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, JsonS
     /**
      * Splice a portion of the underlying collection array.
      *
-     * @param  int  $offset
-     * @param  int|null  $length
-     * @param  mixed  $replacement
+     * @param int      $offset
+     * @param int|null $length
+     * @param mixed    $replacement
+     *
      * @return static
      */
     public function splice($offset, $length = null, $replacement = [])
     {
         $items = $this->all();
-        if (func_num_args() === 1) {
+        if (1 === \func_num_args()) {
             return new static(array_splice($items, $offset));
         }
+
         return new static(array_splice($items, $offset, $length, $replacement));
     }
 
     /**
      * Get the first item in the collection but throw an exception if no matching items exist.
      *
-     * @param  mixed  $key
-     * @param  mixed  $operator
-     * @param  mixed  $value
-     * @return mixed
+     * @param mixed $key
+     * @param mixed $operator
+     * @param mixed $value
      *
      * @throws NotFoundException
+     *
+     * @return mixed
      */
     public function firstOrFail($key = null, $operator = null, $value = null)
     {
-        $filter = func_num_args() > 1
-            ? drewlabs_core_create_evaluation_callback(...func_get_args())
+        $filter = \func_num_args() > 1
+            ? drewlabs_core_create_evaluation_callback(...\func_get_args())
             : $key;
 
         $default = new PhpStdClass();
         $item = $this->first($filter, $default);
         if ($item === $default) {
-            throw new NotFoundException;
+            throw new NotFoundException();
         }
+
         return $item;
     }
 
     /**
      * Chunk the collection into chunks of the given size.
      *
-     * @param  int  $size
      * @return static
      */
     public function chunk(int $size)
     {
         if ($size <= 0) {
-            return new static;
+            return new static();
         }
         $chunks = [];
         foreach (array_chunk($this->all(), $size, true) as $chunk) {
             $chunks[] = new static($chunk);
         }
+
         return new static($chunks);
     }
 
     /**
      * Chunk the collection into chunks with a callback.
      *
-     * @param  callable  $callback
      * @return static
      */
     public function chunkWhile(callable $callback)
@@ -534,7 +529,8 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, JsonS
     /**
      * Take items in the collection while the given condition is met.
      *
-     * @param  mixed  $value
+     * @param mixed $value
+     *
      * @return static
      */
     public function takeWhile($value)
@@ -545,18 +541,16 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, JsonS
     /**
      * Split a collection into a certain number of groups, and fill the first groups completely.
      *
-     * @param  int  $total
      * @return static
      */
     public function splitIn(int $total)
     {
-        return $this->chunk((int)ceil($this->count() / $total));
+        return $this->chunk((int) ceil($this->count() / $total));
     }
 
     /**
      * Skip the first {$offset} items.
      *
-     * @param  int  $offset
      * @return static
      */
     public function skip(int $offset)
@@ -567,7 +561,8 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, JsonS
     /**
      * Skip items in the collection until the given condition is met.
      *
-     * @param  mixed  $value
+     * @param mixed $value
+     *
      * @return static
      */
     public function skipUntil($value)
@@ -578,7 +573,8 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, JsonS
     /**
      * Skip items in the collection while the given condition is met.
      *
-     * @param  mixed  $value
+     * @param mixed $value
+     *
      * @return static
      */
     public function skipWhile($value)
@@ -589,52 +585,50 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, JsonS
     /**
      * Slice the underlying collection array.
      *
-     * @param  int  $offset
-     * @param  int|null  $length
      * @return static
      */
     public function slice(int $offset, ?int $length = null, $preserveKeys = true)
     {
-        $slice = array_slice($this->all(), $offset, $length, true);
+        $slice = \array_slice($this->all(), $offset, $length, true);
+
         return new static($preserveKeys ? $slice : array_values($slice));
     }
 
     /**
      * Split a collection into a certain number of groups.
      *
-     * @param  int  $total
      * @return static
      */
     public function split(int $total)
     {
         if ($this->isEmpty()) {
-            return new static;
+            return new static();
         }
         // #region Initialize variables
-        $items =  $this->all();
+        $items = $this->all();
         $count = $this->count();
-        $groups = new static;
-        $gsize = (int)(floor($count / $total));
+        $groups = new static();
+        $gsize = (int) (floor($count / $total));
         $remain = $count % $total;
         $start = 0;
         // #endregion Initialize variables
-        for ($i = 0; $i < $total; $i++) {
+        for ($i = 0; $i < $total; ++$i) {
             $size = $gsize;
             if ($i < $remain) {
-                $size++;
+                ++$size;
             }
             if ($size) {
-                $groups->push(new static(array_slice($items, $start, $size)));
+                $groups->push(new static(\array_slice($items, $start, $size)));
                 $start += $size;
             }
         }
+
         return $groups;
     }
 
     /**
      * Shuffle the items in the collection.
      *
-     * @param  int|null  $seed
      * @return static
      */
     public function shuffle(?int $seed = null)
@@ -645,7 +639,8 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, JsonS
     /**
      * Replace the collection items with the given items.
      *
-     * @param  mixed  $items
+     * @param mixed $items
+     *
      * @return static
      */
     public function replace($items)
@@ -656,7 +651,8 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, JsonS
     /**
      * Recursively replace the collection items with the given items.
      *
-     * @param  mixed  $items
+     * @param mixed $items
+     *
      * @return static
      */
     public function replaceRecursive($items)
@@ -677,8 +673,9 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, JsonS
     /**
      * Search the collection for a given value and return the corresponding key if successful.
      *
-     * @param  mixed  $value
-     * @param  bool  $strict
+     * @param mixed $value
+     * @param bool  $strict
+     *
      * @return mixed
      */
     public function search($value, $strict = false)
@@ -691,38 +688,43 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, JsonS
                 return $key;
             }
         }
+
         return false;
     }
 
     /**
      * Get and remove the first N items from the collection.
      *
-     * @param  int  $count
+     * @param int $count
+     *
      * @return mixed
      */
     public function shift($count = 1)
     {
         $items = $this->all();
-        if ($count === 1) {
+        if (1 === $count) {
             $result = array_shift($items);
             $this->setProperties($items);
+
             return $result;
         }
         if ($this->isEmpty()) {
-            return new static;
+            return new static();
         }
         $count_ = $this->count();
         $results = [];
         foreach (range(1, min($count, $count_)) as $_) {
-            array_push($results, array_shift($items));
+            $results[] = array_shift($items);
         }
+
         return new static($results);
     }
 
     /**
      * Push one or more items onto the end of the collection.
      *
-     * @param  mixed  $values
+     * @param mixed $values
+     *
      * @return $this
      */
     public function push(...$values)
@@ -738,13 +740,15 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, JsonS
             }
             $this->items_[] = $value;
         }
+
         return $this;
     }
 
     /**
      * Push all of the given items onto the collection.
      *
-     * @param  iterable  $source
+     * @param iterable $source
+     *
      * @return static
      */
     public function concat($source)
@@ -762,40 +766,46 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, JsonS
             }
             $values[] = $value;
         }
+
         return new static(array_combine($keys, $values));
     }
 
     /**
      * Get and remove an item from the collection.
      *
-     * @param  mixed  $key
-     * @param  mixed  $default
+     * @param mixed $key
+     * @param mixed $default
+     *
      * @return mixed
      */
     public function pull($key, $default = null)
     {
         $item = $this->offsetGet($key) ?? ($default instanceof \Closure ? $default() : $default);
         $this->setProperties(drewlabs_core_array_except($this->all(), [$key]));
+
         return $item;
     }
 
     /**
      * Put an item in the collection by key.
      *
-     * @param  mixed  $key
-     * @param  mixed  $value
+     * @param mixed $key
+     * @param mixed $value
+     *
      * @return $this
      */
     public function put($key, $value)
     {
         $this->offsetSet($key, $value);
+
         return $this;
     }
 
     /**
      * Merge the collection with the given items.
      *
-     * @param  mixed  $items
+     * @param mixed $items
+     *
      * @return static
      */
     public function merge($items)
@@ -806,7 +816,8 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, JsonS
     /**
      * Recursively merge the collection with the given items.
      *
-     * @param  mixed  $items
+     * @param mixed $items
+     *
      * @return static
      */
     public function mergeRecursive($items)
@@ -817,7 +828,8 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, JsonS
     /**
      * Union the collection with the given items.
      *
-     * @param  mixed  $items
+     * @param mixed $items
+     *
      * @return static
      */
     public function union($items)
@@ -828,38 +840,40 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, JsonS
     /**
      * Create a new collection consisting of every n-th element.
      *
-     * @param  int  $step
-     * @param  int  $offset
-     * @param bool $preserve_keys
+     * @param int $step
+     * @param int $offset
+     *
      * @return static
      */
     public function nth($step, $offset = 0, bool $preserve_keys = false)
     {
-        $generator_func = function (array $list) use ($step, $offset, $preserve_keys) {
+        $generator_func = static function (array $list) use ($step, $offset, $preserve_keys) {
             $position = 0;
             if ($preserve_keys) {
                 foreach ($list as $key => $value) {
                     if ($position % $step === $offset) {
                         yield $key => $value;
                     }
-                    $position++;
+                    ++$position;
                 }
             } else {
                 foreach ($list as $value) {
                     if ($position % $step === $offset) {
                         yield $value;
                     }
-                    $position++;
+                    ++$position;
                 }
             }
         };
+
         return new static(iterator_to_array($generator_func($this->all())));
     }
 
     /**
      * Get the items with the specified keys.
      *
-     * @param  mixed  $keys
+     * @param mixed $keys
+     *
      * @return static
      */
     public function only($keys)
@@ -870,110 +884,123 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, JsonS
         if (method_exists($keys, 'all')) {
             $keys = $keys->all();
         }
-        $keys = is_array($keys) ? $keys : func_get_args();
+        $keys = \is_array($keys) ? $keys : \func_get_args();
+
         return new static(drewlabs_core_array_only($this->all(), $keys));
     }
 
     /**
      * Get and remove the last N items from the collection.
      *
-     * @param  int  $count
+     * @param int $count
+     *
      * @return mixed
      */
     public function pop($count = 1)
     {
         $values = $this->all();
-        if ($count === 1) {
+        if (1 === $count) {
             $item = array_pop($values);
             $this->setProperties($values);
+
             return $item;
         }
         if ($this->isEmpty()) {
-            return new static;
+            return new static();
         }
         $count_ = $this->count();
         $results = [];
         foreach (range(1, min($count, $count_)) as $_) {
-            array_push($results, array_pop($values));
+            $results[] = array_pop($values);
         }
+
         return new static($results);
     }
 
     /**
      * Push an item onto the beginning of the collection.
      *
-     * @param  mixed  $value
-     * @param  mixed  $key
+     * @param mixed $value
+     * @param mixed $key
+     *
      * @return $this
      */
     public function prepend($value, $key = null)
     {
-        $array_prepend = function ($array, $value, $key = null) {
-            if (func_num_args() === 2) {
+        $array_prepend = static function ($array, $value, $key = null) {
+            if (2 === \func_num_args()) {
                 array_unshift($array, $value);
             } else {
                 $array = [$key => $value] + $array;
             }
+
             return $array;
         };
-        $this->setProperties($array_prepend($this->all(), ...func_get_args()));
+        $this->setProperties($array_prepend($this->all(), ...\func_get_args()));
+
         return $this;
     }
 
     /**
      * Join all items from the collection using a string. The final items can use a separate glue string.
      *
-     * @param  string  $glue
-     * @param  string  $before_last
+     * @param string $glue
+     * @param string $before_last
+     *
      * @return string
      */
     public function join($glue, $before_last = '')
     {
-        if ($before_last === '') {
+        if ('' === $before_last) {
             return $this->implode($glue);
         }
         $count = $this->count();
-        if ($count === 0) {
+        if (0 === $count) {
             return '';
         }
-        if ($count === 1) {
+        if (1 === $count) {
             return $this->last();
         }
         $collection = new static($this);
         $end = $collection->pop();
-        return $collection->implode($glue) . $before_last . $end;
+
+        return $collection->implode($glue).$before_last.$end;
     }
 
     /**
      * Determine if an item exists in the collection by key.
      *
-     * @param  mixed  $key
+     * @param mixed $key
+     *
      * @return bool
      */
     public function has($key)
     {
-        $keys = is_array($key) ? $key : func_get_args();
+        $keys = \is_array($key) ? $key : \func_get_args();
         foreach ($keys as $value) {
-            if (!array_key_exists($value, $this->all())) {
+            if (!\array_key_exists($value, $this->all())) {
                 return false;
             }
         }
+
         return true;
     }
 
     /**
      * Get the values of a given key.
      *
-     * @param  string|array|int|null  $value
-     * @param  string|null  $key
+     * @param string|array|int|null $value
+     * @param string|null           $key
+     *
      * @return static
      */
     public function pluck($value, $key = null)
     {
         $pluck_generator = function () use ($value, $key) {
-            $explode_pluck_params = function ($value, $key) {
-                $value = is_string($value) ? explode('.', $value) : $value;
-                $key = null === $key || is_array($key) ? $key : explode('.', $key);
+            $explode_pluck_params = static function ($value, $key) {
+                $value = \is_string($value) ? explode('.', $value) : $value;
+                $key = null === $key || \is_array($key) ? $key : explode('.', $key);
+
                 return [$value, $key];
             };
             [$value, $key] = $explode_pluck_params($value, $key);
@@ -983,36 +1010,40 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, JsonS
                     yield $value_;
                 } else {
                     $itemKey = drewlabs_core_get($item, $key);
-                    if (is_object($itemKey) && method_exists($itemKey, '__toString')) {
+                    if (\is_object($itemKey) && method_exists($itemKey, '__toString')) {
                         $itemKey = (string) $itemKey;
                     }
                     yield $itemKey => $value_;
                 }
             }
         };
+
         return new static(iterator_to_array($pluck_generator()));
     }
 
     /**
      * Concatenate values of a given key as a string.
      *
-     * @param  string  $value
-     * @param  string|null  $glue
+     * @param string      $value
+     * @param string|null $glue
+     *
      * @return string
      */
     public function implode($value, $glue = null)
     {
         $first = $this->first();
-        if (is_array($first) || (is_object($first) && !method_exists($first, '__toString()'))) {
+        if (\is_array($first) || (\is_object($first) && !method_exists($first, '__toString()'))) {
             return implode($glue ?? '', $this->pluck($value)->all());
         }
+
         return implode($value ?? '', $this->all());
     }
 
     /**
      * Intersect the collection with the given items.
      *
-     * @param  mixed  $items
+     * @param mixed $items
+     *
      * @return static
      */
     public function intersect($items)
@@ -1023,7 +1054,8 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, JsonS
     /**
      * Intersect the collection with the given items by key.
      *
-     * @param  mixed  $items
+     * @param mixed $items
+     *
      * @return static
      */
     public function intersectByKeys($items)
@@ -1034,23 +1066,23 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, JsonS
         ));
     }
 
-
     /**
      * Get a flattened array of the items in the collection.
      *
-     * @param  int  $depth
+     * @param int $depth
+     *
      * @return static
      */
-    public function flatten($depth = INF)
+    public function flatten($depth = \INF)
     {
-        $flatten_func = function ($array, $depth) use (&$flatten_func) {
+        $flatten_func = static function ($array, $depth) use (&$flatten_func) {
             $result = [];
             foreach ($array as $item) {
                 $item = method_exists($item, 'all') ? $item->all() : $item;
-                if (!is_array($item)) {
+                if (!\is_array($item)) {
                     $result[] = $item;
                 } else {
-                    $values = $depth === 1
+                    $values = 1 === $depth
                         ? array_values($item)
                         : $flatten_func($item, $depth - 1);
                     foreach ($values as $value) {
@@ -1058,8 +1090,10 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, JsonS
                     }
                 }
             }
+
             return $result;
         };
+
         return new static($flatten_func($this->all(), $depth));
     }
 
@@ -1076,7 +1110,8 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, JsonS
     /**
      * Remove an item from the collection by key.
      *
-     * @param  string|array  $keys
+     * @param string|array $keys
+     *
      * @return $this
      */
     public function forget(...$keys)
@@ -1084,19 +1119,21 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, JsonS
         foreach ($keys as $key) {
             $this->offsetUnset($key);
         }
+
         return $this;
     }
 
     /**
      * Group an associative array by a field or using a callback.
      *
-     * @param  array|callable|string  $groupBy
-     * @param  bool  $preserveKeys
+     * @param array|callable|string $groupBy
+     * @param bool                  $preserveKeys
+     *
      * @return static
      */
     public function groupBy($groupBy, $preserveKeys = false)
     {
-        if (!drewlabs_core_is_closure($groupBy) && is_array($groupBy)) {
+        if (!drewlabs_core_is_closure($groupBy) && \is_array($groupBy)) {
             $nextGroups = $groupBy;
             $groupBy = array_shift($nextGroups);
         }
@@ -1104,11 +1141,11 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, JsonS
         $groupBy = drewlabs_core_create_get_callback($groupBy);
         $results = [];
         foreach ($this->all() as $key => $value) {
-            $groupKeys = !is_array($group = $groupBy($value, $key)) ? [$group] : $group;
+            $groupKeys = !\is_array($group = $groupBy($value, $key)) ? [$group] : $group;
             foreach ($groupKeys as $groupKey) {
-                $groupKey = is_bool($groupKey) ? (int) $groupKey : $groupKey;
-                if (!array_key_exists($groupKey, $results)) {
-                    $results[$groupKey] = new static;
+                $groupKey = \is_bool($groupKey) ? (int) $groupKey : $groupKey;
+                if (!\array_key_exists($groupKey, $results)) {
+                    $results[$groupKey] = new static();
                 }
                 $results[$groupKey]->offsetSet($preserveKeys ? $key : null, $value);
             }
@@ -1119,25 +1156,29 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, JsonS
              * @var \Closure
              */
             $map = $result->map;
+
             return $map('groupBy', [$nextGroups, $preserveKeys]);
         }
+
         return $result;
     }
 
     /**
      * Key an associative array by a field or using a callback.
      *
-     * @param  callable|string  $keyBy
+     * @param callable|string $keyBy
+     *
      * @return static
      */
     public function keyBy($keyBy)
     {
         $keyBy = drewlabs_core_create_get_callback($keyBy);
+
         return new static(iterator_to_array(
             (function () use ($keyBy) {
                 foreach ($this->all() as $key => $item) {
                     $resolvedKey = $keyBy($item, $key);
-                    if (is_object($resolvedKey)) {
+                    if (\is_object($resolvedKey)) {
                         $resolvedKey = (string) $resolvedKey;
                     }
                     yield $resolvedKey => $item;
@@ -1149,40 +1190,44 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, JsonS
     /**
      * Get all items except for those with the specified keys.
      *
-     * @param  mixed  $keys
+     * @param mixed $keys
+     *
      * @return static
      */
     public function except($keys)
     {
         if (method_exists($keys, 'all')) {
             $keys = $keys->all();
-        } elseif (!is_array($keys)) {
-            $keys = func_get_args();
+        } elseif (!\is_array($keys)) {
+            $keys = \func_get_args();
         }
+
         return new static(drewlabs_core_array_except($this->all(), $keys));
     }
 
     /**
      * Get the median of a given key.
      *
-     * @param  string|array|null  $key
+     * @param string|array|null $key
+     *
      * @return mixed
      */
     public function median($key = null)
     {
         $values = (isset($key) ? $this->pluck($key) : $this)
-            ->filter(function ($item) {
-                return !is_null($item);
+            ->filter(static function ($item) {
+                return null !== $item;
             })->sort()->values();
 
         $count = $values->count();
-        if ($count === 0) {
+        if (0 === $count) {
             return;
         }
         $middle = (int) ($count / 2);
         if ($count % 2) {
             return $values->get($middle);
         }
+
         return (new static([
             $values->get($middle - 1), $values->get($middle),
         ]))->average();
@@ -1191,23 +1236,25 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, JsonS
     /**
      * Get the mode of a given key.
      *
-     * @param  string|array|null  $key
+     * @param string|array|null $key
+     *
      * @return array|null
      */
     public function mode($key = null)
     {
-        if ($this->count() === 0) {
+        if (0 === $this->count()) {
             return;
         }
         $collection = isset($key) ? $this->pluck($key) : $this;
-        $counts = new static;
-        $collection->each(function ($value) use ($counts) {
+        $counts = new static();
+        $collection->each(static function ($value) use ($counts) {
             $counts[$value] = isset($counts[$value]) ? $counts[$value] + 1 : 1;
         });
         $sorted = $counts->sort();
         $highestValue = $sorted->last();
-        return $sorted->filter(function ($value) use ($highestValue) {
-            return $value == $highestValue;
+
+        return $sorted->filter(static function ($value) use ($highestValue) {
+            return $value === $highestValue;
         })->sort()->keys()->all();
     }
 
@@ -1224,7 +1271,8 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, JsonS
     /**
      * Get the items in the collection that are not present in the given items.
      *
-     * @param  mixed  $items
+     * @param mixed $items
+     *
      * @return static
      */
     public function diff($items)
@@ -1235,8 +1283,8 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, JsonS
     /**
      * Get the items in the collection that are not present in the given items, using the callback.
      *
-     * @param  mixed  $items
-     * @param  callable  $callback
+     * @param mixed $items
+     *
      * @return static
      */
     public function diffUsing($items, callable $callback)
@@ -1247,7 +1295,8 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, JsonS
     /**
      * Get the items in the collection whose keys and values are not present in the given items.
      *
-     * @param  mixed  $items
+     * @param mixed $items
+     *
      * @return static
      */
     public function diffAssoc($items)
@@ -1258,8 +1307,8 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, JsonS
     /**
      * Get the items in the collection whose keys and values are not present in the given items, using the callback.
      *
-     * @param  mixed  $items
-     * @param  callable  $callback
+     * @param mixed $items
+     *
      * @return static
      */
     public function diffAssocUsing($items, callable $callback)
@@ -1270,7 +1319,8 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, JsonS
     /**
      * Get the items in the collection whose keys are not present in the given items.
      *
-     * @param  mixed  $items
+     * @param mixed $items
+     *
      * @return static
      */
     public function diffKeys($items)
@@ -1281,8 +1331,8 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, JsonS
     /**
      * Get the items in the collection whose keys are not present in the given items, using the callback.
      *
-     * @param  mixed  $items
-     * @param  callable  $callback
+     * @param mixed $items
+     *
      * @return static
      */
     public function diffKeysUsing($items, callable $callback)
@@ -1291,7 +1341,6 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, JsonS
     }
 
     // #endregion Adding missing Illuminate collection methods
-
 
     public function getIterator()
     {
@@ -1373,9 +1422,21 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, JsonS
         // return $this->keys_->getArrayCopy();
     }
 
-    public function __clone()
+    private function setProperties(array $items = [])
     {
-        $this->keys_ = clone $this->keys_;
-        $this->items_ = clone $this->items_;
+        $this->items_ = new \ArrayIterator(array_values($items));
+        $this->keys_ = new \ArrayIterator(array_keys($items));
+    }
+
+    /**
+     * Creates a lazy collection instance.
+     *
+     * @param mixed|null $iterable
+     *
+     * @return LazyCollection
+     */
+    private function lazy($iterable = null)
+    {
+        return new LazyCollection($iterable ?? $this->all());
     }
 }

@@ -23,12 +23,12 @@ use Drewlabs\Support\Immutable\ValueObject;
  * */
 class ActionResult extends ValueObject implements ActionsActionResult
 {
-
     /**
      * Class instances initializer. It takes as parameter the value to wrap.
-     * 
-     * @param mixed $data 
-     * @return self 
+     *
+     * @param mixed $data
+     *
+     * @return self
      */
     public function __construct($data)
     {

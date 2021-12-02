@@ -16,14 +16,12 @@ namespace Drewlabs\Support\Types;
 use Drewlabs\Contracts\Support\NamedFuncArgument as NamedFuncArgumentInterface;
 use Drewlabs\Support\Types\Traits\FuncArgument;
 
-/** @package Drewlabs\Support\Types */
 class NamedFuncArgument implements NamedFuncArgumentInterface
 {
     use FuncArgument;
 
     /**
      * Parameter holding the state of the parameter.
-     *
      *
      * @var string|int
      */
@@ -37,7 +35,6 @@ class NamedFuncArgument implements NamedFuncArgumentInterface
     private $type;
 
     /**
-     * 
      * @var string
      */
     private $name;
@@ -52,11 +49,6 @@ class NamedFuncArgument implements NamedFuncArgumentInterface
         $this->state = $state;
     }
 
-    public function getName(): ?string
-    {
-        return $this->name;
-    }
-
     /**
      * Handle type conversion to string.
      *
@@ -64,6 +56,11 @@ class NamedFuncArgument implements NamedFuncArgumentInterface
      */
     public function __toString()
     {
-        return sprintf("%s:%s", $this->getType(), $this->isOptional() ? FuncArgumentEnum::OPTIONAL : FuncArgumentEnum::REQUIRED);
+        return sprintf('%s:%s', $this->getType(), $this->isOptional() ? FuncArgumentEnum::OPTIONAL : FuncArgumentEnum::REQUIRED);
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
     }
 }

@@ -39,6 +39,7 @@ abstract class ModelValueObject extends ValueObject
         $model = $this->getModel();
         $self = drewlabs_core_is_empty($this->___attributes) && (null !== $model) ?
             (new static($model->attributesToArray()))->withModel($model) : $this;
+
         return $self;
     }
 }

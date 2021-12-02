@@ -17,10 +17,10 @@ use Drewlabs\Contracts\Support\DataTransfertObject\QueryResultInterface;
 use Drewlabs\Support\Actions\Action;
 use Drewlabs\Support\Actions\ActionResult;
 use Drewlabs\Support\Collections\SimpleCollection;
-use Drewlabs\Support\XML\XMLAttribute;
-
-use Drewlabs\Support\XML\XMLElement;
 use Drewlabs\Support\Compact\DataTransfertObjectBridge;
+
+use Drewlabs\Support\XML\XMLAttribute;
+use Drewlabs\Support\XML\XMLElement;
 
 /**
  * Provides a proxy interface to {@link Action} class constructor.
@@ -36,8 +36,6 @@ function Action($attributes = [])
 
 /**
  * Provides a proxy interface to {@link ActionResult} class constructor.
- *
- * @param mixed $attributes
  *
  * @return ActionResult
  */

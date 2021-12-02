@@ -16,7 +16,6 @@ namespace Drewlabs\Support\Types;
 use Drewlabs\Contracts\Support\FuncArgument as SupportFuncArgument;
 use Drewlabs\Support\Types\Traits\FuncArgument as TraitsFuncArgument;
 
-/** @package Drewlabs\Support\Types */
 class FuncArgument implements SupportFuncArgument
 {
     use TraitsFuncArgument;
@@ -52,6 +51,6 @@ class FuncArgument implements SupportFuncArgument
      */
     public function __toString()
     {
-        return sprintf("%s:%s", $this->getType(), $this->isOptional() ? FuncArgumentEnum::OPTIONAL : FuncArgumentEnum::REQUIRED);
+        return sprintf('%s:%s', $this->getType(), $this->isOptional() ? FuncArgumentEnum::OPTIONAL : FuncArgumentEnum::REQUIRED);
     }
 }
