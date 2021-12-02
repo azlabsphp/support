@@ -270,13 +270,13 @@ class OverloadedMethodHandler implements OverloadedPartialMethodHandler
                 case 'int':
                     return new NamedFuncArgument(
                         $type instanceof SupportNamedFuncArgument ? $type->getName() : '*',
-                        AbstractTypes::INTEGER,
+                        AbstractTypes::STD_INTEGER,
                         $type->isOptional() ? FuncArgumentEnum::OPTIONAL : FuncArgumentEnum::REQUIRED
                     );
                 case 'bool':
                     return new NamedFuncArgument(
                         $type instanceof SupportNamedFuncArgument ? $type->getName() : '*',
-                        AbstractTypes::BOOLEAN,
+                        AbstractTypes::STD_BOOLEAN,
                         $type->isOptional() ? FuncArgumentEnum::OPTIONAL : FuncArgumentEnum::REQUIRED
                     );
                 default:
