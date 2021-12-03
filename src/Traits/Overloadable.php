@@ -13,14 +13,12 @@ declare(strict_types=1);
 
 namespace Drewlabs\Support\Traits;
 
-use ArrayIterator;
 use Drewlabs\Contracts\Support\FuncArgument;
 use Drewlabs\Contracts\Support\OverloadedPartialMethodHandler;
 use Drewlabs\Support\Exceptions\OverloadMethodCallExpection;
 use Drewlabs\Support\Exceptions\TooManyMatchingMethodOverload;
 use Drewlabs\Support\MethodOverload\OverloadedMethodHandler;
 use Drewlabs\Support\Types\AbstractTypes;
-use Iterator;
 
 trait Overloadable
 {
@@ -37,7 +35,7 @@ trait Overloadable
         $fallbacks = [];
         $handlers = drewlabs_core_iter_filter(
             drewlabs_core_iter_map(
-                new ArrayIterator($signatures ?? []),
+                new \ArrayIterator($signatures ?? []),
                 function ($value, $key) {
                     return new OverloadedMethodHandler($value, $key, $this);
                 }
@@ -47,18 +45,19 @@ trait Overloadable
                 if ($candidate->isFallback()) {
                     $fallbacks[] = $candidate;
                 }
+
                 return $matches;
             },
             false
         );
-        $total_handlers = \iterator_count($handlers);
+        $total_handlers = iterator_count($handlers);
         if (
-            $total_handlers === 1 &&
-            (count($fallbacks) === 1) &&
+            1 === $total_handlers &&
+            (1 === \count($fallbacks)) &&
             (null !== $method = $fallbacks[0])
         ) {
             return $method->call($args);
-        } else if ($total_handlers === 1) {
+        } elseif (1 === $total_handlers) {
             if ($method = $this->getMethod($handlers)) {
                 return $method->call($args);
             }
@@ -73,21 +72,22 @@ trait Overloadable
                     }
                     $arguments = $curr->getArguments();
                     $carry_arguments = $carry->getArguments();
-                    /**
+                    /*
                      * @var FuncArgument
                      */
                     foreach (drewlabs_core_array_zip($arguments, $carry_arguments) as $value) {
-                        // TODO : If the string formatting of the current method argument is "*:", then use the carry method 
-                        if (drewlabs_core_strings_contains($value[0] ?? '', sprintf("%s:", AbstractTypes::ANY))) {
+                        // TODO : If the string formatting of the current method argument is "*:", then use the carry method
+                        if (drewlabs_core_strings_contains($value[0] ?? '', sprintf('%s:', AbstractTypes::ANY))) {
                             $carry = $carry;
                             break;
                         }
                         // TODO : If the string formatting of the carry method argument is "*:", then use the current method
-                        if (drewlabs_core_strings_contains($value[1] ?? '', sprintf("%s:", AbstractTypes::ANY))) {
+                        if (drewlabs_core_strings_contains($value[1] ?? '', sprintf('%s:', AbstractTypes::ANY))) {
                             $carry = $curr;
                             break;
                         }
                     }
+
                     return $carry;
                 },
                 null
@@ -101,13 +101,12 @@ trait Overloadable
     }
 
     /**
-     * 
-     * @param Iterator $values 
-     * @return OverloadedMethodHandler 
+     * @return OverloadedMethodHandler
      */
     private function getMethod(\Iterator $values)
     {
         $values->rewind();
+
         return $values->current();
     }
 }

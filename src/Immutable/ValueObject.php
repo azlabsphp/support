@@ -68,6 +68,16 @@ abstract class ValueObject implements ValueObjectInterface, Clonable, \IteratorA
         }
     }
 
+    public static function hiddenProperty()
+    {
+        return '___hidden';
+    }
+
+    public static function guardedProperty()
+    {
+        return '___guarded';
+    }
+
     /**
      * return this list of dynamic attributes that can be set on the ihnerited class.
      *
@@ -81,15 +91,5 @@ abstract class ValueObject implements ValueObjectInterface, Clonable, \IteratorA
     final protected function getAttributes()
     {
         return $this->___attributes;
-    }
-
-    static function hiddenProperty()
-    {
-        return '___hidden';
-    }
-
-    static function guardedProperty()
-    {
-        return '___guarded';
     }
 }

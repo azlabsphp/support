@@ -1,34 +1,39 @@
 <?php
 
-namespace Drewlabs\Support\Collections;
+declare(strict_types=1);
 
-use ArrayIterator;
-use DateTimeInterface;
-use Exception;
-use InvalidArgumentException;
-use Iterator;
-use IteratorAggregate;
+/*
+ * This file is part of the Drewlabs package.
+ *
+ * (c) Sidoine Azandrew <azandrewdevelopper@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+namespace Drewlabs\Support\Collections;
 
 use function Drewlabs\Support\Proxy\Collection;
 
-class LazyCollection implements IteratorAggregate
+use Iterator;
+
+class LazyCollection implements \IteratorAggregate
 {
     /**
-     * 
      * @var \Iterator|\Iterable
      */
     private $source;
 
     /**
-     * 
-     * @param \Iterable|\Iterator $values 
-     * @return self 
+     * @param \Iterable|\Iterator $values
+     *
+     * @return self
      */
     public function __construct($values = [])
     {
-        if (is_array($values)) {
-            $this->source = new ArrayIterator($values);
-        } else if ($values instanceof self) {
+        if (\is_array($values)) {
+            $this->source = new \ArrayIterator($values);
+        } elseif ($values instanceof self) {
             $this->source = $this->getIterator();
         } else {
             $this->source = $values;
@@ -38,13 +43,14 @@ class LazyCollection implements IteratorAggregate
     public static function empty()
     {
         $self = new static([]);
+
         return $self;
     }
 
     /**
-     * 
-     * @return \Iterator 
-     * @throws Exception 
+     * @throws \Exception
+     *
+     * @return \Iterator
      */
     #[\ReturnTypeWillChange]
     public function getIterator()
@@ -54,9 +60,10 @@ class LazyCollection implements IteratorAggregate
 
     public function takeUntil($value)
     {
-        $callback = drewlabs_core_is_closure($value) ? $value : (function ($item) use ($value) {
+        $callback = drewlabs_core_is_closure($value) ? $value : (static function ($item) use ($value) {
             return $item === $value;
         });
+
         return new static(function () use ($callback) {
             foreach ($this as $key => $item) {
                 if ($callback($item, $key)) {
@@ -70,7 +77,6 @@ class LazyCollection implements IteratorAggregate
     /**
      * Chunk the collection into chunks with a callback.
      *
-     * @param  callable  $callback
      * @return static
      */
     public function chunkWhile(callable $callback)
@@ -105,42 +111,23 @@ class LazyCollection implements IteratorAggregate
      */
     public function all()
     {
-        if (is_array($this->source)) {
+        if (\is_array($this->source)) {
             return $this->source;
         }
-        return iterator_to_array($this->getIterator());
-    }
 
-    /**
-     * Make an iterator from the given source.
-     *
-     * @param  mixed  $source
-     * @return \Iterator
-     */
-    private function makeIterator($source)
-    {
-        if ($source instanceof \IteratorAggregate) {
-            return $source->getIterator();
-        }
-        if (is_array($source)) {
-            return new ArrayIterator($source);
-        }
-        if ($source instanceof \Iterator) {
-            return $this->source;
-        }
-        return $source();
+        return iterator_to_array($this->getIterator());
     }
 
     /**
      * Take items in the collection until a given point in time.
      *
-     * @param  \DateTimeInterface  $timeout
      * @return static
      */
-    public function takeUntilTimeout(DateTimeInterface $timeout)
+    public function takeUntilTimeout(\DateTimeInterface $timeout)
     {
         $timeout = $timeout->getTimestamp();
-        return $this->takeWhile(function () use ($timeout) {
+
+        return $this->takeWhile(static function () use ($timeout) {
             return drewlabs_core_datetime_is_future($timeout);
         });
     }
@@ -148,34 +135,35 @@ class LazyCollection implements IteratorAggregate
     /**
      * Take items in the collection while the given condition is met.
      *
-     * @param  mixed  $value
+     * @param mixed $value
+     *
      * @return static
      */
     public function takeWhile($value)
     {
-        $callback = drewlabs_core_is_closure($value) ? $value : (function ($item) use ($value) {
+        $callback = drewlabs_core_is_closure($value) ? $value : (static function ($item) use ($value) {
             return $item === $value;
         });
-        return $this->takeUntil(function ($item, $key) use ($callback) {
+
+        return $this->takeUntil(static function ($item, $key) use ($callback) {
             return !$callback($item, $key);
         });
     }
 
-
-
     /**
      * Count the number of items in the collection by a field or using a callback.
      *
-     * @param  callable|string  $countBy
+     * @param callable|string $countBy
+     *
      * @return static
      */
     public function countBy($countBy = null)
     {
         $countBy = null === $countBy
-            ? function ($value) {
+            ? static function ($value) {
                 return $value;
             }
-            : drewlabs_core_create_get_callback($countBy);
+        : drewlabs_core_create_get_callback($countBy);
 
         return new static(function () use ($countBy) {
             $counts = [];
@@ -184,7 +172,7 @@ class LazyCollection implements IteratorAggregate
                 if (empty($counts[$group])) {
                     $counts[$group] = 0;
                 }
-                $counts[$group]++;
+                ++$counts[$group];
             }
 
             yield from $counts;
@@ -193,53 +181,57 @@ class LazyCollection implements IteratorAggregate
 
     /**
      * Map the values into a new class.
-     * 
+     *
      * TODO: Move to the Enumarable trait
      *
-     * @param  string  $class
+     * @param string $class
+     *
      * @return static
      */
     public function mapInto($class)
     {
-        return $this->map(function ($value, $key) use ($class) {
+        return $this->map(static function ($value, $key) use ($class) {
             return new $class($value, $key);
         });
     }
 
-    public function  count()
+    public function count()
     {
-        return count($this->all());
+        return \count($this->all());
     }
+
     /**
-     * Apply the transformation callback over each item element
-     * 
-     * @param Closure|callback $callback 
-     * @param bool $preserve_key 
-     * @return self 
+     * Apply the transformation callback over each item element.
+     *
+     * @param Closure|callable $callback
+     *
+     * @return self
      */
     public function map($callback, bool $preserve_key = true)
     {
-        if (!($callback instanceof \Closure) || !is_callable($callback)) {
-            throw new InvalidArgumentException(
-                'Expect parameter 1 to be an instance of \Closure, or php callable, got : ' . gettype($callback)
+        if (!($callback instanceof \Closure) || !\is_callable($callback)) {
+            throw new \InvalidArgumentException(
+                'Expect parameter 1 to be an instance of \Closure, or php callable, got : '.\gettype($callback)
             );
         }
+
         return new static(drewlabs_core_iter_map($this->getIterator(), $callback, $preserve_key));
     }
 
     /**
      * Skip items in the collection until the given condition is met.
      *
-     * @param  mixed  $value
+     * @param mixed $value
+     *
      * @return static
      */
     public function skipUntil($value)
     {
-        $callback = drewlabs_core_is_closure($value) ? $value : (function ($item) use ($value) {
+        $callback = drewlabs_core_is_closure($value) ? $value : (static function ($item) use ($value) {
             return $item === $value;
         });
 
-        return $this->skipWhile(function (...$params) use ($callback) {
+        return $this->skipWhile(static function (...$params) use ($callback) {
             return !$callback(...$params);
         });
     }
@@ -247,14 +239,16 @@ class LazyCollection implements IteratorAggregate
     /**
      * Skip items in the collection while the given condition is met.
      *
-     * @param  mixed  $value
+     * @param mixed $value
+     *
      * @return static
      */
     public function skipWhile($value)
     {
-        $callback = drewlabs_core_is_closure($value) ? $value : (function ($item) use ($value) {
+        $callback = drewlabs_core_is_closure($value) ? $value : (static function ($item) use ($value) {
             return $item === $value;
         });
+
         return new static(function () use ($callback) {
             $iterator = $this->getIterator();
             while ($iterator->valid() && $callback($iterator->current(), $iterator->key())) {
@@ -265,5 +259,27 @@ class LazyCollection implements IteratorAggregate
                 $iterator->next();
             }
         });
+    }
+
+    /**
+     * Make an iterator from the given source.
+     *
+     * @param mixed $source
+     *
+     * @return \Iterator
+     */
+    private function makeIterator($source)
+    {
+        if ($source instanceof \IteratorAggregate) {
+            return $source->getIterator();
+        }
+        if (\is_array($source)) {
+            return new \ArrayIterator($source);
+        }
+        if ($source instanceof \Iterator) {
+            return $this->source;
+        }
+
+        return $source();
     }
 }

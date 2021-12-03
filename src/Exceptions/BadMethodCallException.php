@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace Drewlabs\Support\Exceptions;
 
-class BadMethodCallException
+use BadMethodCallException as GlobalBadMethodCallException;
+
+class BadMethodCallException extends GlobalBadMethodCallException
 {
 }

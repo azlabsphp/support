@@ -132,29 +132,29 @@ class PhpStdClass extends \stdClass implements \ArrayAccess
         return $this->forEach($callback);
     }
 
-    private function validatePropertyName($property)
-    {
-        if (!\is_string($property)) {
-            throw new \InvalidArgumentException('Object accessible property must be of type string');
-        }
-    }
-
     public function toArray(): array
     {
         return iterator_to_array(
             (function () {
                 foreach ($this as $key => $value) {
-                    if (is_object($value) && method_exists($value, 'toArray')) {
+                    if (\is_object($value) && method_exists($value, 'toArray')) {
                         yield $key => $value->toArray();
                         continue;
                     }
-                    if (is_object($value)) {
-                        yield $key => (array)$value;
+                    if (\is_object($value)) {
+                        yield $key => (array) $value;
                         continue;
                     }
                     yield $key => $value;
                 }
             })()
         );
+    }
+
+    private function validatePropertyName($property)
+    {
+        if (!\is_string($property)) {
+            throw new \InvalidArgumentException('Object accessible property must be of type string');
+        }
     }
 }

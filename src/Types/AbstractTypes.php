@@ -23,22 +23,22 @@ class AbstractTypes
     /**
      * PHP double variables' data type.
      */
-    public const DOUBLE = 'double';
+    public const STD_DOUBLE = 'double';
 
     /**
      * PHP boolean variables' data type.
      */
-    public const BOOLEAN = 'boolean';
+    public const STD_BOOLEAN = 'boolean';
 
     /**
      * PHP integer variables' data type.
      */
-    public const INTEGER = 'integer';
+    public const STD_INTEGER = 'integer';
 
     /**
      * PHP string variables' data type.
      */
-    public const STRING = 'string';
+    public const STD_STRING = 'string';
 
     /**
      * PHP array variables' data type.

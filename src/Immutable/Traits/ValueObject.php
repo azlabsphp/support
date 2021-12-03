@@ -15,11 +15,9 @@ namespace Drewlabs\Support\Immutable\Traits;
 
 use Drewlabs\Support\Compact\PhpStdClass;
 use Drewlabs\Support\Immutable\Exceptions\ImmutableObjectException;
-use ReflectionFunction;
 
 trait ValueObject
 {
-
     /**
      * Creates an instance of Drewlabs\Support\Immutable\ValueObject::class.
      *
@@ -249,6 +247,34 @@ trait ValueObject
     }
 
     /**
+     * Query for the provided $key in the object attribute.
+     *
+     * @param \Closure|mixed|null $default
+     *
+     * @return mixed
+     */
+    public function getAttribute(string $key, $default = null)
+    {
+        $getFromAttributesFunc = function () use ($key, $default) {
+            $result = drewlabs_core_array_get(
+                $this->___attributes ? $this->___attributes->toArray() : [],
+                $key,
+                function () use ($key) {
+                    [$isassoc, $properties] = $this->loadAttributesBindings();
+                    $properties = $isassoc ? array_keys($properties) : $properties;
+                    if (\in_array($key, $properties, true)) {
+                        return $this->___attributes[$key] ?? null;
+                    }
+                }
+            );
+
+            return $result ?? ((null !== $default && \is_callable($default)) ? (new \ReflectionFunction($default))->invoke() : $default);
+        };
+
+        return method_exists($this, 'serialize'.drewlabs_core_strings_as_camel_case($key).'Attribute') ? $this->callAttributeSerializer($key) : $getFromAttributesFunc();
+    }
+
+    /**
      * {@inheritDoc}
      *
      * Attributes setter internal method
@@ -290,8 +316,8 @@ trait ValueObject
 
     protected function callAttributeDeserializer($name, $value)
     {
-        if (method_exists($this, 'deserialize' . drewlabs_core_strings_as_camel_case($name) . 'Attribute')) {
-            return $this->{'deserialize' . drewlabs_core_strings_as_camel_case($name) . 'Attribute'}($value);
+        if (method_exists($this, 'deserialize'.drewlabs_core_strings_as_camel_case($name).'Attribute')) {
+            return $this->{'deserialize'.drewlabs_core_strings_as_camel_case($name).'Attribute'}($value);
         }
 
         return $value;
@@ -299,8 +325,8 @@ trait ValueObject
 
     protected function callAttributeSerializer($name)
     {
-        if (method_exists($this, 'serialize' . drewlabs_core_strings_as_camel_case($name) . 'Attribute')) {
-            return $this->{'serialize' . drewlabs_core_strings_as_camel_case($name) . 'Attribute'}();
+        if (method_exists($this, 'serialize'.drewlabs_core_strings_as_camel_case($name).'Attribute')) {
+            return $this->{'serialize'.drewlabs_core_strings_as_camel_case($name).'Attribute'}();
         }
 
         return $this->___attributes[$name];
@@ -354,31 +380,5 @@ trait ValueObject
         }
 
         return null;
-    }
-
-    /**
-     * Query for the provided $key in the object attribute
-     * 
-     * @param string $key 
-     * @param \Closure|mixed|null $default 
-     * @return mixed 
-     */
-    public function getAttribute(string $key, $default = null)
-    {
-        $getFromAttributesFunc = function () use ($key, $default) {
-            $result = drewlabs_core_array_get(
-                $this->___attributes ? $this->___attributes->toArray() : [],
-                $key,
-                function () use ($key) {
-                    list($isassoc, $properties) = $this->loadAttributesBindings();
-                    $properties = $isassoc ? array_keys($properties) : $properties;
-                    if (\in_array($key, $properties, true)) {
-                        return $this->___attributes[$key] ?? null;
-                    }
-                }
-            );
-            return $result ?? ((null !== $default && is_callable($default)) ? (new ReflectionFunction($default))->invoke() : $default);
-        };
-        return method_exists($this, 'serialize' . drewlabs_core_strings_as_camel_case($key) . 'Attribute') ? $this->callAttributeSerializer($key) : $getFromAttributesFunc();
     }
 }

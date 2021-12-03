@@ -13,19 +13,15 @@ declare(strict_types=1);
 
 namespace Drewlabs\Support\MethodOverload;
 
-use ArrayIterator;
-use Drewlabs\Contracts\Support\OverloadedPartialMethodHandler;
-use Drewlabs\Support\Types\AbstractTypes;
-use Drewlabs\Support\Types\FuncArgumentEnum;
 use Drewlabs\Contracts\Support\FuncArgument as FuncArgumentInterface;
 use Drewlabs\Contracts\Support\NamedFuncArgument as SupportNamedFuncArgument;
-use Drewlabs\Support\MethodOverload\OverloadMethodArgumentsContainer;
+use Drewlabs\Contracts\Support\OverloadedPartialMethodHandler;
+use Drewlabs\Support\Exceptions\BadMethodCallException;
+use Drewlabs\Support\Types\AbstractTypes;
 use Drewlabs\Support\Types\FuncArgument;
+use Drewlabs\Support\Types\FuncArgumentEnum;
 use Drewlabs\Support\Types\NamedFuncArgument;
-use InvalidArgumentException;
-use ReflectionFunction;
 
-/** @package Drewlabs\Support */
 class OverloadedMethodHandler implements OverloadedPartialMethodHandler
 {
     /**
@@ -43,20 +39,20 @@ class OverloadedMethodHandler implements OverloadedPartialMethodHandler
     private $arguments = [];
 
     /**
-     * Method can be use as fallback
-     * 
+     * Method can be use as fallback.
+     *
      * @var bool
      */
     private $isFallback_ = false;
 
-    public function __construct($signatureOrMethod, $methodOrKey, $object)
+    public function __construct($signature, $method, $object)
     {
-        if (!\is_int($methodOrKey)) {
-            $this->buildFromSignature($signatureOrMethod, $methodOrKey, $object);
-        } elseif (\is_string($signatureOrMethod) && method_exists($object, $signatureOrMethod)) {
-            $this->buildUsingMethodReflection($object, $signatureOrMethod);
-        } elseif ($signatureOrMethod instanceof \Closure) {
-            $this->buildUsingClosureReflection($object, $signatureOrMethod);
+        if (!\is_int($method)) {
+            $this->buildFromSignature($signature, $method, $object);
+        } elseif (\is_string($signature) && method_exists($object, $signature)) {
+            $this->buildUsingMethodReflection($object, $signature);
+        } elseif ($signature instanceof \Closure) {
+            $this->buildUsingClosureReflection($signature);
         } else {
             throw new \Exception('Unrecognized overloaded method definition.');
         }
@@ -71,20 +67,20 @@ class OverloadedMethodHandler implements OverloadedPartialMethodHandler
             return empty($args);
         }
         $value_args_count = \count($args);
-        if (($this->arguments->optionalArgumentsCount() === 0) && ($arguments_ = $this->arguments->getAll())) {
-            return $value_args_count === count($arguments_) &&
+        if ((0 === $this->arguments->optionalArgumentsCount()) && ($arguments_ = $this->arguments->getAll())) {
+            return $value_args_count === \count($arguments_) &&
                 $this->matchArgumentsToParameters($arguments_, $args);
-        } else {
-            // Get all the arguments
-            $arguments_ = $this->arguments->getAll();
-            $total_argument_count = count($arguments_);
-            if ($value_args_count > $this->arguments->requiredArgumentsCount()) {
-                $arguments_ = $value_args_count > $total_argument_count ?
-                    array_slice($arguments_, 0, $total_argument_count) :
-                    array_slice($arguments_, 0, $value_args_count);
-            }
-            return $this->matchArgumentsToParameters($arguments_, $args);
         }
+        // Get all the arguments
+        $arguments_ = $this->arguments->getAll();
+        $total_argument_count = \count($arguments_);
+        if ($value_args_count > $this->arguments->requiredArgumentsCount()) {
+            $arguments_ = $value_args_count > $total_argument_count ?
+                \array_slice($arguments_, 0, $total_argument_count) :
+                \array_slice($arguments_, 0, $value_args_count);
+        }
+
+        return $this->matchArgumentsToParameters($arguments_, $args);
     }
 
     public function isFallback()
@@ -106,8 +102,6 @@ class OverloadedMethodHandler implements OverloadedPartialMethodHandler
             )
         );
     }
-
-
 
     public function getOptionalArguments()
     {
@@ -135,6 +129,9 @@ class OverloadedMethodHandler implements OverloadedPartialMethodHandler
 
     public function call($args)
     {
+        if (!($this->callable instanceof \Closure)) {
+            throw new BadMethodCallException();
+        }
         return $this->callable->__invoke(...$args);
     }
 
@@ -159,21 +156,20 @@ class OverloadedMethodHandler implements OverloadedPartialMethodHandler
         $closure = function (...$args) use ($method) {
             return $this->{$method}(...$args);
         };
-
         return $closure->bindTo($object, $object);
     }
 
-    private function buildUsingClosureReflection($object, $closure)
+    private function buildUsingClosureReflection(\Closure $closure)
     {
-        $this->callable = $closure->bindTo($object);
+        $this->callable = $closure;
         $reflected = new \ReflectionFunction($closure);
         $this->arguments = $this->mapArguments($reflected);
     }
 
     /**
-     * 
-     * @param \ReflectionFunctionAbstract $reflectionFunction 
-     * @return OverloadMethodArgumentsContainer 
+     * @param \ReflectionFunctionAbstract $reflectionFunction
+     *
+     * @return OverloadMethodArgumentsContainer
      */
     private function mapArguments($reflectionFunction)
     {
@@ -190,14 +186,15 @@ class OverloadedMethodHandler implements OverloadedPartialMethodHandler
                 $curr->isOptional() ? FuncArgumentEnum::OPTIONAL : FuncArgumentEnum::REQUIRED
             );
             if ($curr->isOptional()) {
-                $optinal_args_count += 1;
+                ++$optinal_args_count;
                 $optional_arguments[] = $arg;
             }
             if (!$curr->isOptional()) {
-                $required_args_count += 1;
+                ++$required_args_count;
                 $required_arguments[] = $arg;
             }
         }
+
         return new OverloadMethodArgumentsContainer([
             'all' => $this->normalizeTypes([...$required_arguments, ...$optional_arguments]),
             'required' => $required_arguments,
@@ -208,9 +205,7 @@ class OverloadedMethodHandler implements OverloadedPartialMethodHandler
     }
 
     /**
-     * 
-     * @param array $signature 
-     * @return OverloadMethodArgumentsContainer 
+     * @return OverloadMethodArgumentsContainer
      */
     private function mapArraySignature(array $signature = [])
     {
@@ -242,15 +237,16 @@ class OverloadedMethodHandler implements OverloadedPartialMethodHandler
             }
             $funcArg = new FuncArgument($type, $state);
             if ($funcArg->isOptional()) {
-                $optinal_args_count += 1;
+                ++$optinal_args_count;
                 $optional_arguments[] = $funcArg;
             }
             if (!$funcArg->isOptional()) {
-                $required_args_count += 1;
+                ++$required_args_count;
                 $required_arguments[] = $funcArg;
             }
             $carr[] = $funcArg;
         }
+
         return new OverloadMethodArgumentsContainer([
             'all' => $this->normalizeTypes([...$required_arguments, ...$optional_arguments]),
             'required' => $required_arguments,
@@ -274,13 +270,13 @@ class OverloadedMethodHandler implements OverloadedPartialMethodHandler
                 case 'int':
                     return new NamedFuncArgument(
                         $type instanceof SupportNamedFuncArgument ? $type->getName() : '*',
-                        AbstractTypes::INTEGER,
+                        AbstractTypes::STD_INTEGER,
                         $type->isOptional() ? FuncArgumentEnum::OPTIONAL : FuncArgumentEnum::REQUIRED
                     );
                 case 'bool':
                     return new NamedFuncArgument(
                         $type instanceof SupportNamedFuncArgument ? $type->getName() : '*',
-                        AbstractTypes::BOOLEAN,
+                        AbstractTypes::STD_BOOLEAN,
                         $type->isOptional() ? FuncArgumentEnum::OPTIONAL : FuncArgumentEnum::REQUIRED
                     );
                 default:
@@ -290,30 +286,30 @@ class OverloadedMethodHandler implements OverloadedPartialMethodHandler
     }
 
     /**
-     * 
-     * @param FuncArgument[] $arguments 
-     * @param array $params 
-     * @return bool 
-     * @throws InvalidArgumentException 
+     * @param FuncArgument[] $arguments
+     *
+     * @throws \InvalidArgumentException
+     *
+     * @return bool
      */
     private function matchArgumentsToParameters(array $arguments, array $params)
     {
         return array_reduce(
             drewlabs_core_array_zip($params, $arguments),
-            function ($isMatch, $argAndType) {
+            static function ($isMatch, $argAndType) {
                 [$arg, $type] = $argAndType;
                 if (null === $type) {
                     return null === $arg ? $isMatch && true : $isMatch && false;
-                } else {
-                    $type_class = \gettype($arg);
-                    $arg_class = $type->getType();
-                    $is_arg_instance_of = $arg instanceof $arg_class;
-                    $arg_null_for_optional = null === $arg && $type->isOptional();
-                    return $isMatch && ($arg_null_for_optional ||
-                        AbstractTypes::ANY === $arg_class ||
-                        $type_class === $arg_class ||
-                        $is_arg_instance_of);
                 }
+                $type_class = \gettype($arg);
+                $arg_class = $type->getType();
+                $is_arg_instance_of = $arg instanceof $arg_class;
+                $arg_null_for_optional = null === $arg && $type->isOptional();
+
+                return $isMatch && ($arg_null_for_optional ||
+                    AbstractTypes::ANY === $arg_class ||
+                    $type_class === $arg_class ||
+                    $is_arg_instance_of);
             },
             true
         );

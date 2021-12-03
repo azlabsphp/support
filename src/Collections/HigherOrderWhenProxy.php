@@ -1,5 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * This file is part of the Drewlabs package.
+ *
+ * (c) Sidoine Azandrew <azandrewdevelopper@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Drewlabs\Support\Collections;
 
 class HigherOrderWhenProxy
@@ -21,8 +32,9 @@ class HigherOrderWhenProxy
     /**
      * Create a new proxy instance.
      *
-     * @param  mixed  $collection
-     * @param  bool  $condition
+     * @param mixed $collection
+     * @param bool  $condition
+     *
      * @return void
      */
     public function __construct($collection, $condition)
@@ -34,7 +46,8 @@ class HigherOrderWhenProxy
     /**
      * Proxy accessing an attribute onto the collection.
      *
-     * @param  string  $key
+     * @param string $key
+     *
      * @return mixed
      */
     public function __get($key)
@@ -47,8 +60,9 @@ class HigherOrderWhenProxy
     /**
      * Proxy a method call onto the collection.
      *
-     * @param  string  $method
-     * @param  array  $parameters
+     * @param string $method
+     * @param array  $parameters
+     *
      * @return mixed
      */
     public function __call($method, $parameters)
