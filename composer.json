@@ -29,9 +29,9 @@
     ],
     "minimum-stability": "stable",
     "require": {
-        "php": ">=7.3",
-        "drewlabs/core-helpers": "^1.0",
-        "drewlabs/contracts": "^1.0"
+        "php": ">=7.4",
+        "drewlabs/core-helpers": "^2.0",
+        "drewlabs/contracts": "^2.0"
     },
     "repositories":[
         {
