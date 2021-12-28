@@ -132,6 +132,7 @@ class OverloadedMethodHandler implements OverloadedPartialMethodHandler
         if (!($this->callable instanceof \Closure)) {
             throw new BadMethodCallException();
         }
+
         return $this->callable->__invoke(...$args);
     }
 
@@ -156,6 +157,7 @@ class OverloadedMethodHandler implements OverloadedPartialMethodHandler
         $closure = function (...$args) use ($method) {
             return $this->{$method}(...$args);
         };
+
         return $closure->bindTo($object, $object);
     }
 

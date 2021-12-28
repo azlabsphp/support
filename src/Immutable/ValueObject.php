@@ -23,34 +23,6 @@ abstract class ValueObject implements ValueObjectInterface, Clonable, \IteratorA
     use TraitsValueObject;
 
     /**
-     * Attribute container.
-     *
-     * @var object
-     */
-    protected $___attributes;
-
-    /**
-     * Defines the properties that can not been set using the attr array.
-     *
-     * @var array
-     */
-    protected $___guarded = [];
-
-    /**
-     * List of properties to hide when jsonSerializing the current object.
-     *
-     * @var array
-     */
-    protected $___hidden = [];
-
-    /**
-     * Indicated whether the bindings should load guarded properties.
-     *
-     * @var bool
-     */
-    protected $___loadGuardedAttributes = false;
-
-    /**
      * Provides an object oriented iterator over the this object keys and values.
      *
      * @return \Traversable

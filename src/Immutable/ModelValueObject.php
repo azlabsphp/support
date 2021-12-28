@@ -13,33 +13,56 @@ declare(strict_types=1);
 
 namespace Drewlabs\Support\Immutable;
 
-use Drewlabs\Support\Immutable\Traits\HasModelAttribute;
+use Drewlabs\Contracts\Data\Model\Model;
 
 /**
  * Enhance the default {ValueObject} class with model bindings.
  */
 abstract class ModelValueObject extends ValueObject
 {
-    use HasModelAttribute;
+    /**
+     * @var Model
+     */
+    private $___model;
 
-    public function jsonSerialize()
+    /**
+     * @param \stdObject|Model|array $attributes
+     *
+     * @return void
+     */
+    public function __construct($attributes = [])
     {
-        return $this->toArray();
+        $this->initializeAttributes();
+        if ($attributes instanceof Model) {
+            // TODO : SET MODEL INSTANCE FOR CLASS USER TO MANIPULATE DURING SERIALISATIOM
+            $this->setModel($attributes);
+            // TODO : CREATE ATTRIBUTE FROM MODEL SERIALIZATION
+            $this->setAttributes($attributes->toArray());
+        } else {
+            // TODO : CALL PARENT CONSTRUCTOR IF CONSTRUCTOR PARAMETER IS NOT INSTANCE OF Model::class
+            parent::__construct($attributes);
+        }
     }
 
-    public function toArray()
+    /**
+     * @return Model
+     */
+    public function getModel()
     {
-        $attributes = $this->rebuildAttributesFromModelAttributesIfEmpty()->attributesToArray();
-
-        return empty($attributes) ? null : $attributes;
+        return $this->___model;
     }
 
-    protected function rebuildAttributesFromModelAttributesIfEmpty()
+    /**
+     * @param mixed $model
+     *
+     * @return self
+     */
+    public function setModel($model)
     {
-        $model = $this->getModel();
-        $self = drewlabs_core_is_empty($this->___attributes) && (null !== $model) ?
-            (new static($model->attributesToArray()))->withModel($model) : $this;
+        if ($model) {
+            $this->___model = $model;
+        }
 
-        return $self;
+        return $this;
     }
 }
