@@ -98,7 +98,7 @@ trait ValueObject
         return $this->___attributes->__toString();
     }
 
-    private function __internalSerialized()
+    protected function __internalSerialized()
     {
         [$associative, $fillables] = $this->loadAttributesBindings();
         if ($associative) {
@@ -238,6 +238,17 @@ trait ValueObject
             $this->callAttributeSerializer($key) ?? (\is_callable($default) ?
                 (new \ReflectionFunction($default))->invoke() :
                 $default) : $callback($key, $default);
+    }
+
+    public function setHidden(array $value)
+    {
+        $this->___hidden = $value;
+        return $this;
+    }
+
+    public function getHidden()
+    {
+        return $this->___hidden;
     }
 
     /**

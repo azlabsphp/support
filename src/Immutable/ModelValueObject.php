@@ -36,6 +36,12 @@ abstract class ModelValueObject extends ValueObject
         if ($attributes instanceof Model) {
             // TODO : SET MODEL INSTANCE FOR CLASS USER TO MANIPULATE DURING SERIALISATIOM
             $this->setModel($attributes);
+            $this->setHidden(
+                array_merge(
+                    $attributes->getHidden() ?? [],
+                    $this->getHidden() ?? []
+                )
+            );
             // TODO : CREATE ATTRIBUTE FROM MODEL SERIALIZATION
             $this->setAttributes($attributes->toArray());
         } else {
@@ -64,5 +70,15 @@ abstract class ModelValueObject extends ValueObject
         }
 
         return $this;
+    }
+
+    public function jsonSerialize()
+    {
+        return $this->toArray();
+    }
+
+    public function toArray()
+    {
+        return $this->attributesToArray();
     }
 }
