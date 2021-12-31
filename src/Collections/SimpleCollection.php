@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Drewlabs\Support\Collections;
 
+use Closure;
 use Drewlabs\Contracts\Support\Collections\CollectionInterface;
 use Drewlabs\Support\Collections\Traits\Enumerable;
 use Drewlabs\Support\Collections\Traits\Sortable;
@@ -154,7 +155,7 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, \Json
             },
             function (int $key) {
                 $this->items_->offsetUnset($key);
-
+                $this->keys_->offsetUnset($key);
                 return true;
             },
             function (string $value) {
@@ -297,7 +298,7 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, \Json
      *
      * @return mixed
      */
-    public function reduce(\Closure $callback, $initial = null)
+    public function reduce(Closure $callback, $initial = null)
     {
         return drewlabs_core_iter_reduce($this->items_, $callback, $initial);
     }
@@ -1341,7 +1342,7 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, \Json
 
     // #endregion Adding missing Illuminate collection methods
 
-    public function getIterator()
+    public function getIterator(): \Traversable
     {
         // Provide a smart iterator implementation
         return new \ArrayIterator($this->all());
@@ -1354,7 +1355,7 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, \Json
      *
      * @return bool
      */
-    public function offsetExists($key)
+    public function offsetExists($key): bool
     {
         return $this->contains($key);
     }
@@ -1384,9 +1385,9 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, \Json
      *
      * @return void
      */
-    public function offsetSet($key, $value)
+    public function offsetSet($key, $value): void
     {
-        return $key ? $this->add($key, $value) : $this->add($value);
+        $key ? $this->add($key, $value) : $this->add($value);
     }
 
     /**
@@ -1396,7 +1397,7 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, \Json
      *
      * @return mixed
      */
-    public function offsetUnset($key)
+    public function offsetUnset($key): void
     {
         if (!is_numeric($key) || !\is_string($key)) {
             $key = drewlabs_core_array_search($key, $this->keys_->getArrayCopy());
