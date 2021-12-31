@@ -1372,9 +1372,10 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, \Json
         if (\is_string($key)) {
             $key = drewlabs_core_array_search($key, $this->keys_->getArrayCopy());
         }
-        if ($key) {
-            return $this->items_[$key] ?? null;
+        if (false === $key) {
+            return null;
         }
+        return $this->items_[$key];
     }
 
     /**
@@ -1402,7 +1403,7 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, \Json
         if (!is_numeric($key) || !\is_string($key)) {
             $key = drewlabs_core_array_search($key, $this->keys_->getArrayCopy());
         }
-        if ($key) {
+        if (false !== $key) {
             $this->keys_->offsetUnset($key);
             $this->items_->offsetUnset($key);
         }
