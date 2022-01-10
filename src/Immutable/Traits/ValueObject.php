@@ -49,6 +49,12 @@ trait ValueObject
     protected $___loadGuardedAttributes = false;
 
     /**
+     * 
+     * @var bool
+     */
+    private $___isAssociative = false;
+
+    /**
      * Creates an instance of Drewlabs\Support\Immutable\ValueObject::class.
      *
      * @param array|object $attributes
@@ -72,9 +78,7 @@ trait ValueObject
      */
     public function __get($name)
     {
-        [$associative, $fillables] = $this->loadAttributesBindings();
-
-        return $this->_internalGetAttribute($name, $associative, $fillables);
+        return $this->_internalGetAttribute($name);
     }
 
     /**
@@ -100,13 +104,13 @@ trait ValueObject
 
     protected function __internalSerialized()
     {
-        [$associative, $fillables] = $this->loadAttributesBindings();
-        if ($associative) {
+        $fillables = $this->loadAttributesBindings();
+        if ($this->___isAssociative) {
             return iterator_to_array(
-                (function () use ($associative, $fillables) {
+                (function () use ($fillables) {
                     foreach ($fillables as $key => $value) {
                         if (!\in_array($key, $this->___hidden, true)) {
-                            yield $value => $this->_internalGetAttribute($key, $associative, $fillables);
+                            yield $value => $this->callAttributeSerializer($key);
                         }
                     }
                 })()
@@ -114,10 +118,10 @@ trait ValueObject
         }
 
         return iterator_to_array(
-            (function () use ($associative, $fillables) {
-                foreach ($fillables as $key) {
+            (function () use ($fillables) {
+                foreach (array_values($fillables) as $key) {
                     if (!\in_array($key, $this->___hidden, true)) {
-                        yield $key => $this->_internalGetAttribute($key, $associative, $fillables);
+                        yield $key => $this->callAttributeSerializer($key);
                     }
                 }
             })()
@@ -130,11 +134,17 @@ trait ValueObject
      * Creates a copy of the current object changing the changing old attributes
      * values with newly proivided ones
      */
-    public function copyWith(array $attributes, $set_guarded = false)
+    public function copyWith(array $attributes, $setGuarded = false)
     {
-        $attributes = array_merge($this->__internalSerialized(), $attributes ?? []);
-
-        return (clone $this)->initializeAttributes()->setAttributes($attributes, $set_guarded);
+        $attributes = array_merge(
+            $this->__internalSerialized(),
+            $attributes ?? []
+        );
+        return (clone $this)->initializeAttributes()
+            ->setAttributes(
+                $attributes,
+                $setGuarded
+            );
     }
 
     /**
@@ -144,17 +154,17 @@ trait ValueObject
      */
     public function fromStdClass($object_)
     {
-        [$associative, $fillables] = $this->loadAttributesBindings();
-        if ($associative) {
+        $fillables = $this->loadAttributesBindings();
+        if ($this->___isAssociative) {
             foreach ($fillables as $key => $value) {
                 if (property_exists($object_, $value) && $this->isNotGuarded($value, true)) {
-                    $this->setAttribute($key, $object_->{$value}, $associative, $fillables);
+                    $this->setAttribute($key, $object_->{$value});
                 }
             }
         } else {
             foreach ($fillables as $key) {
                 if (property_exists($object_, $key) && $this->isNotGuarded($key, true)) {
-                    $this->setAttribute($key, $object_->{$key}, $associative, $fillables);
+                    $this->setAttribute($key, $object_->{$key});
                 }
             }
         }
@@ -223,11 +233,7 @@ trait ValueObject
                 $this->___attributes ? $this->___attributes->toArray() : [],
                 $name,
                 function () use ($name) {
-                    [$associative, $fillable] = $this->loadAttributesBindings();
-                    $fillable = $associative ? array_keys($fillable) : $fillable;
-                    if (\in_array($name, $fillable, true)) {
-                        return $this->___attributes[$name] ?? null;
-                    }
+                    return $this->__get($name);
                 }
             );
 
@@ -259,10 +265,7 @@ trait ValueObject
      */
     protected function loadAttributesBindings()
     {
-        $fillables = $this->getJsonableAttributes();
-        $associative = drewlabs_core_array_is_full_assoc($fillables);
-
-        return [$associative, $fillables];
+        return $this->getJsonableAttributes();
     }
 
     /**
@@ -292,7 +295,7 @@ trait ValueObject
             return $this->{'serialize' . drewlabs_core_strings_as_camel_case($name) . 'Attribute'}();
         }
 
-        return $this->___attributes[$name];
+        return $this->___attributes[$name] ?? null;
     }
 
     /**
@@ -311,7 +314,9 @@ trait ValueObject
     protected function initializeAttributes()
     {
         $this->___attributes = new PhpStdClass();
-
+        $this->___isAssociative = drewlabs_core_array_is_full_assoc(
+            $this->getJsonableAttributes()
+        );
         return $this;
     }
 
@@ -380,28 +385,27 @@ trait ValueObject
     /**
      * Attributes setter internal method.
      *
-     * @param bool $set_guarded
+     * @param bool $setGuarded
      *
      * @return $this
      */
-    protected function setAttributes(array $attributes, $set_guarded = false)
+    protected function setAttributes(array $attributes, $setGuarded = false)
     {
-        $this->___loadGuardedAttributes = $set_guarded;
-        [$associative, $fillables] = $this->loadAttributesBindings();
-        if ($associative) {
+        $this->___loadGuardedAttributes = $setGuarded;
+        $fillables = $this->loadAttributesBindings();
+        if ($this->___isAssociative) {
             foreach ($fillables as $key => $value) {
-                if (\array_key_exists($value, $attributes) && $this->isNotGuarded($value, $set_guarded)) {
-                    $this->setAttribute($key, $attributes[$value], $associative, $fillables);
+                if (\array_key_exists($value, $attributes) && $this->isNotGuarded($value, $setGuarded)) {
+                    $this->setAttribute($key, $attributes[$value]);
                 }
             }
         } else {
             foreach ($fillables as $key) {
-                if (\array_key_exists($key, $attributes) && $this->isNotGuarded($key, $set_guarded)) {
-                    $this->setAttribute($key, $attributes[$key], $associative, $fillables);
+                if (\array_key_exists($key, $attributes) && $this->isNotGuarded($key, $setGuarded)) {
+                    $this->setAttribute($key, $attributes[$key]);
                 }
             }
         }
-
         return $this;
     }
 
@@ -417,25 +421,19 @@ trait ValueObject
      * @return self
      */
 
-    /**
+     /**
      * Internal attribute setter method.
-     *
-     * @param mixed $value
-     * @param mixed $associative
-     * @param mixed $fillables
-     *
-     * @return self
-     */
-    private function setAttribute(string $name, $value, $associative, $fillables)
+      * 
+      * @param string $name 
+      * @param mixed $value 
+      * @return $this 
+      */
+    private function setAttribute(string $name, $value)
     {
-        $fillables = $associative ? array_keys($fillables) : $fillables;
-        if (\in_array($name, $fillables, true)) {
-            $result = $this->callAttributeDeserializer($name, $value);
-            if (null !== $result) {
-                $this->___attributes[$name] = $result;
-            }
+        $result = $this->callAttributeDeserializer($name, $value);
+        if (null !== $result) {
+            $this->___attributes[$name] = $result;
         }
-
         return $this;
     }
 
@@ -444,13 +442,21 @@ trait ValueObject
      *
      * @return mixed
      */
-    private function _internalGetAttribute(string $name, bool $associative, array $fillables)
+    private function _internalGetAttribute(string $name)
     {
-        $fillables = $associative ? array_keys($fillables) : $fillables;
-        if (\in_array($name, $fillables, true)) {
-            return isset($this->___attributes[$name]) ? $this->callAttributeSerializer($name) : null;
+        $fillables = $this->loadAttributesBindings() ?? [];
+        if (!$this->___isAssociative) {
+            return $this->callAttributeSerializer($name);
         }
-
+        if (null !== $this->___attributes[$name] ?? null) {
+            return $this->callAttributeSerializer($name);
+        }
+        if (array_key_exists($name, $fillables)) {
+            return $this->callAttributeSerializer($name);
+        }
+        if ($key = drewlabs_core_array_search($name, $fillables)) {
+            return $this->callAttributeSerializer($key);
+        }
         return null;
     }
 
