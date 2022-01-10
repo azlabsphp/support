@@ -132,7 +132,7 @@ trait ValueObject
      */
     public function copyWith(array $attributes, $set_guarded = false)
     {
-        $attributes = array_merge($this->__internalSerialized(), $attributes);
+        $attributes = array_merge($this->__internalSerialized(), $attributes ?? []);
 
         return (clone $this)->initializeAttributes()->setAttributes($attributes, $set_guarded);
     }
@@ -274,10 +274,10 @@ trait ValueObject
     protected function callAttributeDeserializer($name, $value)
     {
         if ($this->_propertySetterExists($name)) {
-            return $this->{'set'.drewlabs_core_strings_as_camel_case($name).'Attribute'}($value);
+            return $this->{'set' . drewlabs_core_strings_as_camel_case($name) . 'Attribute'}($value);
         }
         if ($this->_propertyDeserializerExists($name)) {
-            return $this->{'deserialize'.drewlabs_core_strings_as_camel_case($name).'Attribute'}($value);
+            return $this->{'deserialize' . drewlabs_core_strings_as_camel_case($name) . 'Attribute'}($value);
         }
 
         return $value;
@@ -286,10 +286,10 @@ trait ValueObject
     protected function callAttributeSerializer($name)
     {
         if ($this->_propertyGetterExists($name)) {
-            return $this->{'get'.drewlabs_core_strings_as_camel_case($name).'Attribute'}();
+            return $this->{'get' . drewlabs_core_strings_as_camel_case($name) . 'Attribute'}();
         }
         if ($this->_propertySerializerExists($name)) {
-            return $this->{'serialize'.drewlabs_core_strings_as_camel_case($name).'Attribute'}();
+            return $this->{'serialize' . drewlabs_core_strings_as_camel_case($name) . 'Attribute'}();
         }
 
         return $this->___attributes[$name];
@@ -341,6 +341,40 @@ trait ValueObject
         $this->___attributes[$name] = $value;
 
         return $this;
+    }
+
+    /**
+     * Merge hidden property values
+     * 
+     * @param null|array $value 
+     * @return self 
+     */
+    public function mergeHidden(?array $value = [])
+    {
+        $this->___hidden = array_merge($this->___hidden ?: [], $value ?: []);
+        return $this;
+    }
+
+    /**
+     * Merge object attributes
+     * 
+     * @param array $attributes 
+     * @return self 
+     */
+    public function merge(array $attributes)
+    {
+        return $this->copyWith($attributes);
+    }
+
+    /**
+     * Copy the current object
+     * 
+     * @param array $attributes 
+     * @return self 
+     */
+    public function copy()
+    {
+        return $this->copyWith([]);
     }
 
     /**
@@ -422,21 +456,21 @@ trait ValueObject
 
     private function _propertyGetterExists($name)
     {
-        return method_exists($this, 'get'.drewlabs_core_strings_as_camel_case($name).'Attribute');
+        return method_exists($this, 'get' . drewlabs_core_strings_as_camel_case($name) . 'Attribute');
     }
 
     private function _propertySerializerExists($name)
     {
-        return method_exists($this, 'serialize'.drewlabs_core_strings_as_camel_case($name).'Attribute');
+        return method_exists($this, 'serialize' . drewlabs_core_strings_as_camel_case($name) . 'Attribute');
     }
 
     private function _propertySetterExists($name)
     {
-        return method_exists($this, 'set'.drewlabs_core_strings_as_camel_case($name).'Attribute');
+        return method_exists($this, 'set' . drewlabs_core_strings_as_camel_case($name) . 'Attribute');
     }
 
     private function _propertyDeserializerExists($name)
     {
-        return method_exists($this, 'deserialize'.drewlabs_core_strings_as_camel_case($name).'Attribute');
+        return method_exists($this, 'deserialize' . drewlabs_core_strings_as_camel_case($name) . 'Attribute');
     }
 }

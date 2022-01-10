@@ -1,0 +1,5 @@
+# v2022011020051
+
+- Added mergeHidden() method to ValueObject trait
+- Added merge() method to ValueObject trait
+- Added copy() method to ValueObject trait
