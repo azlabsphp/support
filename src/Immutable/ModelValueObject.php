@@ -13,13 +13,17 @@ declare(strict_types=1);
 
 namespace Drewlabs\Support\Immutable;
 
+use BadMethodCallException;
 use Drewlabs\Contracts\Data\Model\Model;
+use Drewlabs\Support\Traits\MethodProxy;
 
 /**
  * Enhance the default {ValueObject} class with model bindings.
  */
 abstract class ModelValueObject extends ValueObject
 {
+    use MethodProxy;
+
     /**
      * @var Model
      */
@@ -80,5 +84,14 @@ abstract class ModelValueObject extends ValueObject
     public function toArray()
     {
         return $this->attributesToArray();
+    }
+
+    public function __call($name, $arguments)
+    {
+        $model = $this->getModel();
+        if ($model) {
+            return $this->proxy($model, $name, $arguments);
+        }
+        throw new BadMethodCallException("Method $name does not exists on " . __CLASS__);
     }
 }
