@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Drewlabs\Support\Traits;
 
-use Drewlabs\Contracts\Support\FuncArgument;
 use Drewlabs\Contracts\Support\OverloadedPartialMethodHandler;
 use Drewlabs\Support\Exceptions\OverloadMethodCallExpection;
 use Drewlabs\Support\Exceptions\TooManyMatchingMethodOverload;

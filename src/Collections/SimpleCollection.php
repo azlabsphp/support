@@ -23,9 +23,7 @@ use Drewlabs\Support\Traits\Overloadable;
 
 final class SimpleCollection implements CollectionInterface, \ArrayAccess, \JsonSerializable
 {
-    use Enumerable;
-    use Overloadable;
-    use Sortable;
+    use Enumerable, Overloadable, Sortable;
 
     /**
      * @var \ArrayIterator
@@ -80,12 +78,13 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, \Json
     {
         return $this->overload($args, [
             function ($key, $value) {
-                $last = drewlabs_core_array_last($this->keys_->getArrayCopy());
+                $keysArray = iterator_to_array($this->keys_);
+                $last = drewlabs_core_array_last($keysArray);
                 if ((null !== $last) && ((is_numeric($last) && !is_numeric($key)) || (!is_numeric($last) && is_numeric($key)))) {
                     throw new \InvalidArgumentException('For performance reason collection index must be either numeric or alphanumeric, not both');
                 }
                 if ($this->keys_->offsetExists($key)) {
-                    $key = drewlabs_core_array_search($key, $this->keys_->getArrayCopy());
+                    $key = drewlabs_core_array_search($key, iterator_to_array($this->keys_));
                     $this->items_[$key] = $value;
                 } else {
                     $this->items_[] = $value;
@@ -96,7 +95,7 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, \Json
             },
             function ($value) {
                 $this->items_[] = $value;
-                $last = drewlabs_core_array_last($this->keys_->getArrayCopy());
+                $last = drewlabs_core_array_last(iterator_to_array($this->keys_));
                 if ((null !== $last) && !is_numeric($last)) {
                     throw new \InvalidArgumentException('For performance reason collection index must be either numeric or alphanumeric, not both');
                 }
@@ -109,9 +108,12 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, \Json
 
     public function addAll(CollectionInterface $values)
     {
-        $last = drewlabs_core_array_last($this->keys_->getArrayCopy());
+        $last = drewlabs_core_array_last(iterator_to_array($this->keys_));
         foreach ($values as $key => $value) {
-            if ((is_numeric($last) && !is_numeric($key)) || (!is_numeric($last) && is_numeric($key))) {
+            if (
+                (is_numeric($last) && !is_numeric($key)) ||
+                (!is_numeric($last) && is_numeric($key))
+            ) {
                 throw new \InvalidArgumentException('For performance reason collection index must be either numeric or alphanumeric, not both');
             }
             $this->items_[] = $value;
@@ -128,7 +130,7 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, \Json
     {
         return $this->overload($args, [
             function (\Closure $predicate, $default = null) {
-                return ($value = \call_user_func($predicate, $this->items_->getArrayCopy())) ? $value : $default;
+                return ($value = \call_user_func($predicate, iterator_to_array($this->items_))) ? $value : $default;
             },
             function (int $key) {
                 return $this->items_[$key] ?? null;
@@ -151,7 +153,7 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, \Json
         return $this->overload($args, [
             function (\Closure $predicate) {
                 // TODO : Handle refolveFn as a predicate
-                return \call_user_func($predicate, $this->items_->getArrayCopy());
+                return \call_user_func($predicate, iterator_to_array($this->items_));
             },
             function (int $key) {
                 $this->items_->offsetUnset($key);
@@ -202,7 +204,7 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, \Json
 
     public function all()
     {
-        return array_combine($this->keys_->getArrayCopy(), $this->items_->getArrayCopy());
+        return array_combine(iterator_to_array($this->keys_), iterator_to_array($this->items_));
     }
 
     public function count()
@@ -247,15 +249,27 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, \Json
     public function map($callback, bool $preserve_key = true)
     {
         if (!($callback instanceof \Closure) || !\is_callable($callback)) {
-            throw new \InvalidArgumentException('Expect parameter 1 to be an instance of \Closure, or php callable, got : '.\gettype($callback));
+            throw new \InvalidArgumentException('Expect parameter 1 to be an instance of \Closure, or php callable, got : ' . \gettype($callback));
         }
 
         return new static(
             $preserve_key ?
                 array_combine(
-                    $this->keys_->getArrayCopy(),
-                    iterator_to_array(drewlabs_core_iter_map($this->items_, $callback, $preserve_key))
-                ) : iterator_to_array(drewlabs_core_iter_map($this->items_, $callback, $preserve_key))
+                    iterator_to_array($this->keys_),
+                    iterator_to_array(
+                        drewlabs_core_iter_map(
+                            $this->items_,
+                            $callback,
+                            $preserve_key
+                        )
+                    )
+                ) : iterator_to_array(
+                    drewlabs_core_iter_map(
+                        $this->items_,
+                        $callback,
+                        $preserve_key
+                    )
+                )
         );
     }
 
@@ -300,7 +314,11 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, \Json
      */
     public function reduce(Closure $callback, $initial = null)
     {
-        return drewlabs_core_iter_reduce($this->items_, $callback, $initial);
+        return drewlabs_core_iter_reduce(
+            $this->items_,
+            $callback,
+            $initial
+        );
     }
 
     public function first($value = null, $default = null)
@@ -375,7 +393,7 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, \Json
     public function pad($size, $value)
     {
         return new self(
-            array_pad($this->items_->getArrayCopy(), $size, $value)
+            array_pad(iterator_to_array($this->items_), $size, $value)
         );
     }
 
@@ -389,7 +407,7 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, \Json
     public function zip(...$items)
     {
         // Creates an iterator zip function
-        return new self(drewlabs_core_array_zip($this->items_->getArrayCopy(), ...$items));
+        return new self(drewlabs_core_array_zip(iterator_to_array($this->items_), ...$items));
     }
 
     /**
@@ -729,7 +747,7 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, \Json
      */
     public function push(...$values)
     {
-        $last_key = drewlabs_core_array_last($this->keys_->getArrayCopy());
+        $last_key = drewlabs_core_array_last(iterator_to_array($this->keys_));
         foreach ($values as $key => $value) {
             if (is_numeric($key) && is_numeric($last_key)) {
                 $last_key = $last_key + 1;
@@ -753,8 +771,8 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, \Json
      */
     public function concat($source)
     {
-        $keys = $this->keys_->getArrayCopy();
-        $values = $this->items_->getArrayCopy();
+        $keys = iterator_to_array($this->keys_);
+        $values = iterator_to_array($this->items_);
         $last_key = drewlabs_core_array_last($keys);
         foreach ($source as $key => $value) {
             if (is_numeric($key) && is_numeric($last_key)) {
@@ -964,7 +982,7 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, \Json
         $collection = new static($this);
         $end = $collection->pop();
 
-        return $collection->implode($glue).$before_last.$end;
+        return $collection->implode($glue) . $before_last . $end;
     }
 
     /**
@@ -1265,7 +1283,11 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, \Json
      */
     public function collapse()
     {
-        return new static(drewlabs_core_iter_collapse($this->all()));
+        return new static(
+            drewlabs_core_iter_collapse(
+                $this->all()
+            )
+        );
     }
 
     /**
@@ -1370,7 +1392,7 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, \Json
     public function offsetGet($key)
     {
         if (\is_string($key)) {
-            $key = drewlabs_core_array_search($key, $this->keys_->getArrayCopy());
+            $key = drewlabs_core_array_search($key, iterator_to_array($this->keys_));
         }
         if (false === $key) {
             return null;
@@ -1401,7 +1423,7 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, \Json
     public function offsetUnset($key): void
     {
         if (!is_numeric($key) || !\is_string($key)) {
-            $key = drewlabs_core_array_search($key, $this->keys_->getArrayCopy());
+            $key = drewlabs_core_array_search($key, iterator_to_array($this->keys_));
         }
         if (false !== $key) {
             $this->keys_->offsetUnset($key);
@@ -1412,15 +1434,13 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, \Json
     public function values()
     {
         // Makes the values return a static
-        return new self($this->items_->getArrayCopy());
-        // return $this->items_->getArrayCopy();
+        return new self(iterator_to_array($this->items_));
     }
 
     public function keys()
     {
         // TODO : Makes the keys() method return
-        return new self($this->keys_->getArrayCopy());
-        // return $this->keys_->getArrayCopy();
+        return new self(iterator_to_array($this->keys_));
     }
 
     private function setProperties(array $items = [])
