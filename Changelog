@@ -4,6 +4,6 @@
 - Added merge() method to ValueObject trait
 - Added copy() method to ValueObject trait
 
-# 
+# v202201252020
 
 - Added a simple DI manager class
