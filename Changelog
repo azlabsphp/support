@@ -7,3 +7,8 @@
 # v202201252020
 
 - Added a simple DI manager class
+
+## v202201282030
+
+- Added [\Drewlabs\AuthHttpGuard\Traits\AttributesAware] interface
+- Added [\Drewlabs\Support\Net\Ping\Client] for pinging tcp resources availability

@@ -1,28 +1,37 @@
 <?php
 
-namespace Drewlabs\Support\DI\Traits;
+declare(strict_types=1);
 
-use Closure;
+/*
+ * This file is part of the Drewlabs package.
+ *
+ * (c) Sidoine Azandrew <azandrewdevelopper@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+namespace Drewlabs\Support\DI\Traits;
 
 trait BindginsResolversAware
 {
     /**
-     * 
-     * @param string|null $name 
-     * @return mixed 
-     * @throws RuntimeException 
+     * @throws RuntimeException
+     *
+     * @return mixed
      */
-    public function get(string $name = null)
+    public function get(?string $name = null)
     {
         if (null === $name) {
             return static::getInstance();
         }
+
         return $this->resolve($name);
     }
 
     public function offsetExists($offset): bool
     {
-        return array_key_exists($offset, $this->bindings ?? []);
+        return \array_key_exists($offset, $this->bindings ?? []);
     }
 
     public function offsetGet($offset)
@@ -32,7 +41,7 @@ trait BindginsResolversAware
 
     public function offsetSet($offset, $value): void
     {
-        $this->bind((string)$offset, $value instanceof Closure ? $value : function () use ($value) {
+        $this->bind((string) $offset, $value instanceof \Closure ? $value : static function () use ($value) {
             return $value;
         });
     }
@@ -40,7 +49,7 @@ trait BindginsResolversAware
     public function offsetUnset($offset): void
     {
         unset(
-            $this->bindings[(string)$offset],
+            $this->bindings[(string) $offset],
             $this->alias['abstracts'][$offset],
             $this->alias['concretes'][$offset]
         );
@@ -49,7 +58,8 @@ trait BindginsResolversAware
     /**
      * Get the alias for an abstract if available.
      *
-     * @param  string  $abstract
+     * @param string $abstract
+     *
      * @return string
      */
     public function getAlias(?string $abstract = null)
@@ -57,7 +67,8 @@ trait BindginsResolversAware
         if (null === $abstract) {
             return $this->aliases;
         }
-        return !is_null($abstract_ = $this->aliases['concretes'][$abstract] ?? null)
+
+        return null !== ($abstract_ = $this->aliases['concretes'][$abstract] ?? null)
             ? $this->getAlias($abstract_)
             : $abstract;
     }

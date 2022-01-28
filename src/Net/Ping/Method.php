@@ -11,21 +11,20 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Drewlabs\Support\DI;
+namespace Drewlabs\Support\Net\Ping;
 
-interface ContextualBindingsBuilder
+class Method
 {
     /**
-     * @param string $abstract
-     *
-     * @return self
+     * @var string
      */
-    public function require($abstract);
-
+    public const SOCK = 'socket';
     /**
-     * @param string|\Closure|array $implementation
-     *
-     * @return void
+     * @var string
      */
-    public function provide($implementation);
+    public const FSOCKOPEN = 'fsockopen';
+    /**
+     * @var string
+     */
+    public const EXEC_BIN = 'exec';
 }

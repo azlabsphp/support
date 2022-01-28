@@ -163,7 +163,7 @@ class LazyCollection implements \IteratorAggregate
             ? static function ($value) {
                 return $value;
             }
-            : drewlabs_core_create_get_callback($countBy);
+        : drewlabs_core_create_get_callback($countBy);
 
         return new static(function () use ($countBy) {
             $counts = [];
@@ -211,7 +211,7 @@ class LazyCollection implements \IteratorAggregate
     {
         if (!($callback instanceof \Closure) || !\is_callable($callback)) {
             throw new \InvalidArgumentException(
-                'Expect parameter 1 to be an instance of \Closure, or php callable, got : ' . \gettype($callback)
+                'Expect parameter 1 to be an instance of \Closure, or php callable, got : '.\gettype($callback)
             );
         }
 

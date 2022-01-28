@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Drewlabs\Support\Collections;
 
-use Closure;
 use Drewlabs\Contracts\Support\Collections\CollectionInterface;
 use Drewlabs\Support\Collections\Traits\Enumerable;
 use Drewlabs\Support\Collections\Traits\Sortable;
@@ -23,7 +22,9 @@ use Drewlabs\Support\Traits\Overloadable;
 
 final class SimpleCollection implements CollectionInterface, \ArrayAccess, \JsonSerializable
 {
-    use Enumerable, Overloadable, Sortable;
+    use Enumerable;
+    use Overloadable;
+    use Sortable;
 
     /**
      * @var \ArrayIterator
@@ -158,6 +159,7 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, \Json
             function (int $key) {
                 $this->items_->offsetUnset($key);
                 $this->keys_->offsetUnset($key);
+
                 return true;
             },
             function (string $value) {
@@ -222,8 +224,6 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, \Json
     }
 
     /**
-     * @param Closure $callback
-     *
      * @throws RuntimeException
      * @throws \InvalidArgumentException
      *
@@ -249,7 +249,7 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, \Json
     public function map($callback, bool $preserve_key = true)
     {
         if (!($callback instanceof \Closure) || !\is_callable($callback)) {
-            throw new \InvalidArgumentException('Expect parameter 1 to be an instance of \Closure, or php callable, got : ' . \gettype($callback));
+            throw new \InvalidArgumentException('Expect parameter 1 to be an instance of \Closure, or php callable, got : '.\gettype($callback));
         }
 
         return new static(
@@ -274,8 +274,6 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, \Json
     }
 
     /**
-     * @param Closure $callback
-     *
      * @return self
      */
     public function filter(\Closure $callback, bool $preserve_key = true)
@@ -307,12 +305,11 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, \Json
     }
 
     /**
-     * @param Closure    $callback
      * @param mixed|null $initial
      *
      * @return mixed
      */
-    public function reduce(Closure $callback, $initial = null)
+    public function reduce(\Closure $callback, $initial = null)
     {
         return drewlabs_core_iter_reduce(
             $this->items_,
@@ -982,7 +979,7 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, \Json
         $collection = new static($this);
         $end = $collection->pop();
 
-        return $collection->implode($glue) . $before_last . $end;
+        return $collection->implode($glue).$before_last.$end;
     }
 
     /**
@@ -1374,8 +1371,6 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, \Json
      * Determine if an item exists at an offset.
      *
      * @param mixed $key
-     *
-     * @return bool
      */
     public function offsetExists($key): bool
     {
@@ -1397,6 +1392,7 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, \Json
         if (false === $key) {
             return null;
         }
+
         return $this->items_[$key];
     }
 
@@ -1405,8 +1401,6 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, \Json
      *
      * @param mixed $key
      * @param mixed $value
-     *
-     * @return void
      */
     public function offsetSet($key, $value): void
     {

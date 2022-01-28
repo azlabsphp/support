@@ -11,21 +11,16 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Drewlabs\Support\DI;
+namespace Drewlabs\Support\Net\Ping;
 
-interface ContextualBindingsBuilder
+interface ClientInterface
 {
     /**
-     * @param string $abstract
+     * Send a Ping request to a given host.
      *
-     * @return self
-     */
-    public function require($abstract);
-
-    /**
-     * @param string|\Closure|array $implementation
+     * @param int $port
      *
-     * @return void
+     * @return PingResult
      */
-    public function provide($implementation);
+    public function send(string $host, ?int $port = null);
 }

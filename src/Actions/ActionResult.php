@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Drewlabs\Support\Actions;
 
-use BadMethodCallException;
 use Drewlabs\Contracts\Support\Actions\ActionResult as ActionsActionResult;
 use Drewlabs\Support\Immutable\ValueObject;
 use Drewlabs\Support\Traits\MethodProxy;
@@ -26,6 +25,7 @@ use Drewlabs\Support\Traits\MethodProxy;
 class ActionResult extends ValueObject implements ActionsActionResult
 {
     use MethodProxy;
+
     /**
      * Class instances initializer. It takes as parameter the value to wrap.
      *
@@ -36,6 +36,17 @@ class ActionResult extends ValueObject implements ActionsActionResult
     public function __construct($data)
     {
         parent::__construct(['value' => $data]);
+    }
+
+    public function __call($name, $arguments)
+    {
+        if ($this->value_) {
+            return $this->proxy($this->value_, $name, $arguments);
+        }
+        if ($value = $this->value()) {
+            return $this->proxy($value, $name, $arguments);
+        }
+        throw new \BadMethodCallException("Method $name does not exists on ".__CLASS__);
     }
 
     public function value()
@@ -60,16 +71,5 @@ class ActionResult extends ValueObject implements ActionsActionResult
         return [
             'value_' => 'value',
         ];
-    }
-
-    public function __call($name, $arguments)
-    {
-        if ($this->value_) {
-            return $this->proxy($this->value_, $name, $arguments);
-        }
-        if ($value = $this->value()) {
-            return $this->proxy($value, $name, $arguments);
-        }
-        throw new BadMethodCallException("Method $name does not exists on " . __CLASS__);
     }
 }
