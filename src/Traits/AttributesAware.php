@@ -104,4 +104,36 @@ trait AttributesAware
 
         return $object;
     }
+
+    public function offsetExists($offset): bool
+    {
+        return array_key_exists($this->attributes ?? [], $offset);
+    }
+
+    public function offsetGet($offset)
+    {
+        return $this->__get($offset);
+    }
+
+    public function offsetSet($offset, $value): void
+    {
+        $this->__set($offset, $value);
+    }
+
+    public function offsetUnset($offset): void
+    {
+        unset($this->attributes[$offset]);
+    }
+
+    public function __isset($name)
+    {
+        return isset($this->attributes[$name]);
+    }
+
+    public function getIterator(): \Traversable
+    {
+        foreach ($this->attributes as $key => $value) {
+            yield $key => $value;
+        }
+    }
 }

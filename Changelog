@@ -4,11 +4,15 @@
 - Added merge() method to ValueObject trait
 - Added copy() method to ValueObject trait
 
-# v202201252020
+## v202201252020
 
 - Added a simple DI manager class
 
 ## v202201282030
 
-- Added [\Drewlabs\AuthHttpGuard\Traits\AttributesAware] interface
+- Added [\Drewlabs\AuthHttpGuard\Traits\AttributesAware] trait
 - Added [\Drewlabs\Support\Net\Ping\Client] for pinging tcp resources availability
+
+## v202201282031
+
+- Makes [\Drewlabs\AuthHttpGuard\Traits\AttributesAware] trait ArrayAccessible and IteratorAggregate
