@@ -31,11 +31,9 @@ class PingResult
     private $error;
 
     /**
-     * 
-     * @param float|bool $latency 
-     * @param null|string $output 
-     * @param null|string $error 
-     * @return void 
+     * @param float|bool $latency
+     *
+     * @return void
      */
     public function __construct($latency, ?string $output = null, ?string $error = null)
     {
