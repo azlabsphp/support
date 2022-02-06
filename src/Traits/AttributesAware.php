@@ -32,6 +32,11 @@ trait AttributesAware
         return Arr::get($this->attributes ?? [], $name, null);
     }
 
+    public function __isset($name)
+    {
+        return isset($this->attributes[$name]);
+    }
+
     /**
      * @return mixed
      */
@@ -48,6 +53,33 @@ trait AttributesAware
             return static::createByReflectedConstructor($reflector, $attributes);
         } catch (\ReflectionException $e) {
             return new self();
+        }
+    }
+
+    public function offsetExists($offset): bool
+    {
+        return \array_key_exists($this->attributes ?? [], $offset);
+    }
+
+    public function offsetGet($offset)
+    {
+        return $this->__get($offset);
+    }
+
+    public function offsetSet($offset, $value): void
+    {
+        $this->__set($offset, $value);
+    }
+
+    public function offsetUnset($offset): void
+    {
+        unset($this->attributes[$offset]);
+    }
+
+    public function getIterator(): \Traversable
+    {
+        foreach ($this->attributes as $key => $value) {
+            yield $key => $value;
         }
     }
 
@@ -103,37 +135,5 @@ trait AttributesAware
         $constructor->getClosure($object)->__invoke($attributes);
 
         return $object;
-    }
-
-    public function offsetExists($offset): bool
-    {
-        return array_key_exists($this->attributes ?? [], $offset);
-    }
-
-    public function offsetGet($offset)
-    {
-        return $this->__get($offset);
-    }
-
-    public function offsetSet($offset, $value): void
-    {
-        $this->__set($offset, $value);
-    }
-
-    public function offsetUnset($offset): void
-    {
-        unset($this->attributes[$offset]);
-    }
-
-    public function __isset($name)
-    {
-        return isset($this->attributes[$name]);
-    }
-
-    public function getIterator(): \Traversable
-    {
-        foreach ($this->attributes as $key => $value) {
-            yield $key => $value;
-        }
     }
 }

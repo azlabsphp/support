@@ -163,7 +163,7 @@ class LazyCollection implements \IteratorAggregate
             ? static function ($value) {
                 return $value;
             }
-        : drewlabs_core_create_get_callback($countBy);
+            : drewlabs_core_create_get_callback($countBy);
 
         return new static(function () use ($countBy) {
             $counts = [];
@@ -211,7 +211,7 @@ class LazyCollection implements \IteratorAggregate
     {
         if (!($callback instanceof \Closure) || !\is_callable($callback)) {
             throw new \InvalidArgumentException(
-                'Expect parameter 1 to be an instance of \Closure, or php callable, got : '.\gettype($callback)
+                'Expect parameter 1 to be an instance of \Closure, or php callable, got : ' . \gettype($callback)
             );
         }
 
@@ -222,6 +222,43 @@ class LazyCollection implements \IteratorAggregate
                 $preserveKey
             )
         );
+    }
+
+    public function filter($callback, bool $preserveKey = true)
+    {
+        if (!($callback instanceof \Closure) || !\is_callable($callback)) {
+            throw new \InvalidArgumentException(
+                'Expect parameter 1 to be an instance of \Closure, or php callable, got : ' . \gettype($callback)
+            );
+        }
+        return new static(
+            drewlabs_core_iter_filter(
+                $this->getIterator(),
+                $callback,
+                $preserveKey
+            )
+        );
+    }
+
+
+
+    public function first($value = null, $default = null)
+    {
+        if (null === $value) {
+            foreach ($this->getIterator() as $value) {
+                return $value;
+            }
+        }
+        $callback = drewlabs_core_is_closure($value) ? $value : (static function ($item) use ($value) {
+            return $item === $value;
+        });
+        foreach ($this->getIterator() as $key => $value) {
+            if ($callback($value, $key)) {
+                return $value;
+            }
+        }
+
+        return $default instanceof \Closure ? $default() : $default;
     }
 
     /**
@@ -276,14 +313,14 @@ class LazyCollection implements \IteratorAggregate
      */
     private function makeIterator($source)
     {
+        if ($source instanceof \Iterator) {
+            return $this->source;
+        }
         if ($source instanceof \IteratorAggregate) {
             return $source->getIterator();
         }
         if (\is_array($source)) {
             return new \ArrayIterator($source);
-        }
-        if ($source instanceof \Iterator) {
-            return $this->source;
         }
 
         return $source();
