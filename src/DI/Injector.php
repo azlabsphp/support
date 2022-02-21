@@ -190,7 +190,7 @@ final class Injector implements \ArrayAccess, ContainerInterface, ContextualBind
         return $reflector->newInstanceArgs(array_values($dependences));
     }
 
-    private function resolveDependencies(string $name, array $parameters = [], &$dependences)
+    private function resolveDependencies(string $name, array $parameters, &$dependences)
     {
         $index = 0;
         foreach ($parameters as $parameter) {

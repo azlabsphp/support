@@ -178,6 +178,7 @@ trait ValueObject
      * JSON Serializable method definition. It convert
      * class attributes to a json object aka PHP array, string, object etc...
      */
+    #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
         return $this->__internalSerialized();

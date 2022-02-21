@@ -40,6 +40,7 @@ trait Accessible
     /**
      * {@inheritDoc}
      */
+    #[\ReturnTypeWillChange]
     public function offsetExists($offset)
     {
         return $this->___attributes->offsetExists($offset);
@@ -48,6 +49,7 @@ trait Accessible
     /**
      * {@inheritDoc}
      */
+    #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         if (\is_int($offset)) {
@@ -64,6 +66,7 @@ trait Accessible
      *                                  a new object from the properties of the current object while changing the
      *                                  needed properties
      */
+    #[\ReturnTypeWillChange]
     public function offsetSet($offset, $value)
     {
         throw new ImmutableObjectException(__CLASS__);
@@ -76,6 +79,7 @@ trait Accessible
      *                                  a new object from the properties of the current object while changing the
      *                                  needed properties to null
      */
+    #[\ReturnTypeWillChange]
     public function offsetUnset($offset)
     {
         throw new ImmutableObjectException(__CLASS__);

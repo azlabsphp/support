@@ -28,24 +28,26 @@ trait BindginsResolversAware
 
         return $this->resolve($name);
     }
-
-    public function offsetExists($offset): bool
+    #[\ReturnTypeWillChange]
+    public function offsetExists($offset)
     {
         return \array_key_exists($offset, $this->bindings ?? []);
     }
-
+    #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         return $this->get($offset);
     }
 
+    #[\ReturnTypeWillChange]
     public function offsetSet($offset, $value): void
     {
         $this->bind((string) $offset, $value instanceof \Closure ? $value : static function () use ($value) {
             return $value;
         });
     }
-
+    
+    #[\ReturnTypeWillChange]
     public function offsetUnset($offset): void
     {
         unset(
