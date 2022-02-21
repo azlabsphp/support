@@ -1,5 +1,4 @@
 /vendor
-/tests
 /composer.lock.json
 composer.lock
 index.php
