@@ -32,7 +32,7 @@ abstract class ValueObject implements ValueObjectInterface, Clonable, \IteratorA
         return $this->getAttributes()->each($callback);
     }
 
-    /** @return \Traversable  */
+    #[\ReturnTypeWillChange]
     public function getIterator(): \Traversable
     {
         foreach ($this->getAttributes() as $key => $value) {

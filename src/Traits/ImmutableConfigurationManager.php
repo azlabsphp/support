@@ -63,6 +63,7 @@ trait ImmutableConfigurationManager
     /**
      * {@inheritDoc}
      */
+    #[\ReturnTypeWillChange]
     public function offsetExists($offset)
     {
         return null !== drewlabs_core_array_get($offset, null);
@@ -71,6 +72,7 @@ trait ImmutableConfigurationManager
     /**
      * {@inheritDoc}
      */
+    #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         return $this->get($offset, null);
@@ -79,6 +81,7 @@ trait ImmutableConfigurationManager
     /**
      * {@inheritDoc}
      */
+    #[\ReturnTypeWillChange]
     public function offsetSet($offset, $value)
     {
         throw new \RuntimeException('Configuration manager class is a readonly class, operations changing the class state are not allowed');
@@ -87,6 +90,7 @@ trait ImmutableConfigurationManager
     /**
      * {@inheritDoc}
      */
+    #[\ReturnTypeWillChange]
     public function offsetUnset($offset)
     {
         throw new \RuntimeException('Configuration manager class is a readonly class, operations changing the class state are not allowed');

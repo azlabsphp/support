@@ -42,13 +42,15 @@ class PhpStdClass extends \stdClass implements \ArrayAccess
         return json_encode($this, \JSON_PRETTY_PRINT);
     }
 
-    public function offsetExists($offset): bool
+    #[\ReturnTypeWillChange]
+    public function offsetExists($offset)
     {
         $this->validatePropertyName($offset);
 
         return property_exists($this, $offset);
     }
 
+    #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         $this->validatePropertyName($offset);
@@ -56,13 +58,15 @@ class PhpStdClass extends \stdClass implements \ArrayAccess
         return $this->offsetExists($offset) ? $this->{$offset} : null;
     }
 
-    public function offsetSet($offset, $value): void
+    #[\ReturnTypeWillChange]
+    public function offsetSet($offset, $value)
     {
         $this->validatePropertyName($offset);
         $this->{$offset} = $value;
     }
 
-    public function offsetUnset($offset): void
+    #[\ReturnTypeWillChange]
+    public function offsetUnset($offset)
     {
         $this->validatePropertyName($offset);
         unset($this->{$offset});
