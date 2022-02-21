@@ -19,6 +19,7 @@ use Drewlabs\Support\Collections\Traits\Sortable;
 use Drewlabs\Support\Compact\PhpStdClass;
 use Drewlabs\Support\Exceptions\NotFoundException;
 use Drewlabs\Support\Traits\Overloadable;
+use Traversable;
 
 final class SimpleCollection implements CollectionInterface, \ArrayAccess, \JsonSerializable
 {
@@ -292,7 +293,7 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, \Json
     }
 
     /**
-     * @param Closure    $callback
+     * @param \Closure    $callback
      * @param mixed|null $initial
      *
      * @return mixed
@@ -1341,7 +1342,7 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, \Json
 
     // #endregion Adding missing Illuminate collection methods
 
-    public function getIterator()
+    public function getIterator(): Traversable
     {
         // Provide a smart iterator implementation
         return new \ArrayIterator($this->all());
@@ -1354,6 +1355,7 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, \Json
      *
      * @return bool
      */
+    #[\ReturnTypeWillChange]
     public function offsetExists($key)
     {
         return $this->contains($key);
@@ -1366,6 +1368,7 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, \Json
      *
      * @return mixed
      */
+    #[\ReturnTypeWillChange]
     public function offsetGet($key)
     {
         if (\is_string($key)) {
@@ -1384,6 +1387,7 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, \Json
      *
      * @return void
      */
+    #[\ReturnTypeWillChange]
     public function offsetSet($key, $value)
     {
         return $key ? $this->add($key, $value) : $this->add($value);
@@ -1396,6 +1400,7 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, \Json
      *
      * @return mixed
      */
+    #[\ReturnTypeWillChange]
     public function offsetUnset($key)
     {
         if (!is_numeric($key) || !\is_string($key)) {
