@@ -59,7 +59,7 @@ abstract class ModelValueObject extends ValueObject
         if ($model) {
             return $this->proxy($model, $name, $arguments);
         }
-        throw new \BadMethodCallException("Method $name does not exists on ".__CLASS__);
+        throw new \BadMethodCallException("Method $name does not exists on " . __CLASS__);
     }
 
     /**
