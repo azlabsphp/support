@@ -56,21 +56,25 @@ trait AttributesAware
         }
     }
 
+    #[\ReturnTypeWillChange]
     public function offsetExists($offset): bool
     {
         return \array_key_exists($this->attributes ?? [], $offset);
     }
 
+    #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         return $this->__get($offset);
     }
 
+    #[\ReturnTypeWillChange]
     public function offsetSet($offset, $value): void
     {
         $this->__set($offset, $value);
     }
 
+    #[\ReturnTypeWillChange]
     public function offsetUnset($offset): void
     {
         unset($this->attributes[$offset]);
