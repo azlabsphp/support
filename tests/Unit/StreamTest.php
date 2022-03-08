@@ -16,7 +16,6 @@ namespace Drewlabs\Support\Tests\Unit;
 use Drewlabs\Support\Collections\Collectors\ArrayCollector;
 use Drewlabs\Support\Collections\Collectors\ChunkedStream;
 use Drewlabs\Support\Collections\Stream;
-use Drewlabs\Support\Collections\StreamCollectors;
 use Drewlabs\Support\Tests\TestCase;
 
 class StreamTest extends TestCase
@@ -26,7 +25,7 @@ class StreamTest extends TestCase
         $stream = Stream::iterate(1, static function ($previous) {
             return $previous + 1;
         });
-        $this->assertSame(range(1, 10), $stream->take(10)->collect(new ArrayCollector));
+        $this->assertSame(range(1, 10), $stream->take(10)->collect(new ArrayCollector()));
     }
 
     public function test_map()
@@ -39,7 +38,7 @@ class StreamTest extends TestCase
             return $value * 2;
         }, range(1, 10)), $stream->take(10)->map(static function ($value) {
             return $value * 2;
-        })->collect(new ArrayCollector));
+        })->collect(new ArrayCollector()));
     }
 
     public function test_filter()
@@ -56,7 +55,7 @@ class StreamTest extends TestCase
             ),
             $stream->take(10)
                 ->filter(static fn ($state) => 0 === $state % 2)
-                ->collect(new ArrayCollector)
+                ->collect(new ArrayCollector())
         );
     }
 
@@ -116,12 +115,12 @@ class StreamTest extends TestCase
             return $previous + 1;
         });
 
-        $result = $stream->takeWhile(fn ($x) => $x > 10)
+        $result = $stream->takeWhile(static fn ($x) => $x > 10)
             ->take(20)
-            ->filter(fn ($x) => $x % 5 === 0)
-            ->map(fn ($x) => $x * 2)
+            ->filter(static fn ($x) => 0 === $x % 5)
+            ->map(static fn ($x) => $x * 2)
             ->first();
-        $this->assertEquals(30, $result);
+        $this->assertSame(30, $result);
     }
 
     public function test_takeUntil()
@@ -129,17 +128,17 @@ class StreamTest extends TestCase
         $stream = Stream::iterate(1, static function ($previous) {
             return $previous + 1;
         });
-        $result = $stream->takeUntil(fn ($x) => $x > 20)
-            ->filter(fn ($x) => $x % 5 === 0)
-            ->map(fn ($x) => $x * 2)
+        $result = $stream->takeUntil(static fn ($x) => $x > 20)
+            ->filter(static fn ($x) => 0 === $x % 5)
+            ->map(static fn ($x) => $x * 2)
             ->first();
-        $this->assertEquals(10, $result);
+        $this->assertSame(10, $result);
     }
 
     public function test_range()
     {
         $stream = Stream::range(1, 100);
-        $this->assertSame($stream->collect(new ArrayCollector), range(1, 100));
+        $this->assertSame($stream->collect(new ArrayCollector()), range(1, 100));
     }
 
     public function test_chunk_stream_collector()

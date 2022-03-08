@@ -71,7 +71,7 @@ trait ValueObject
     /**
      * Makes class attributes accessible through -> syntax.
      *
-     * @param  $name
+     * @param $name
      *
      * @return mixed
      */
@@ -217,7 +217,7 @@ trait ValueObject
         return $this->___loadGuardedAttributes;
     }
 
-    //region Array access method definitions
+    // region Array access method definitions
 
     /**
      * Query for the provided $key in the object attribute.
@@ -410,7 +410,7 @@ trait ValueObject
         return $this;
     }
 
-    //endregion magic methods
+    // endregion magic methods
 
     /**
      * Internal attribute setter method.

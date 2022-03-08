@@ -20,12 +20,12 @@ use Iterator;
 class LazyCollection implements \IteratorAggregate
 {
     /**
-     * @var \Iterator|\Iterable
+     * @var \Iterator|\iterable
      */
     private $source;
 
     /**
-     * @param \Iterable|\Iterator $values
+     * @param \iterable|\Iterator $values
      *
      * @return self
      */
@@ -163,7 +163,7 @@ class LazyCollection implements \IteratorAggregate
             ? static function ($value) {
                 return $value;
             }
-            : drewlabs_core_create_get_callback($countBy);
+        : drewlabs_core_create_get_callback($countBy);
 
         return new static(function () use ($countBy) {
             $counts = [];
@@ -211,7 +211,7 @@ class LazyCollection implements \IteratorAggregate
     {
         if (!($callback instanceof \Closure) || !\is_callable($callback)) {
             throw new \InvalidArgumentException(
-                'Expect parameter 1 to be an instance of \Closure, or php callable, got : ' . \gettype($callback)
+                'Expect parameter 1 to be an instance of \Closure, or php callable, got : '.\gettype($callback)
             );
         }
 
@@ -228,9 +228,10 @@ class LazyCollection implements \IteratorAggregate
     {
         if (!($callback instanceof \Closure) || !\is_callable($callback)) {
             throw new \InvalidArgumentException(
-                'Expect parameter 1 to be an instance of \Closure, or php callable, got : ' . \gettype($callback)
+                'Expect parameter 1 to be an instance of \Closure, or php callable, got : '.\gettype($callback)
             );
         }
+
         return new static(
             drewlabs_core_iter_filter(
                 $this->getIterator(),
@@ -239,8 +240,6 @@ class LazyCollection implements \IteratorAggregate
             )
         );
     }
-
-
 
     public function first($value = null, $default = null)
     {

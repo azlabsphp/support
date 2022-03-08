@@ -11,12 +11,12 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Drewlabs\Support\DI\Exceptions;
+namespace Drewlabs\Support\Types;
 
-class TypeBindingException extends \Exception
+class ConfigureMethod
 {
-    public function __construct(string $message)
-    {
-        parent::__construct($message);
-    }
+    /**
+     * Defines the configure method name of configuration providers.
+     */
+    public const NAME = 'configure';
 }

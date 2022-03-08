@@ -16,3 +16,8 @@
 ## v202201282031
 
 - Makes [\Drewlabs\AuthHttpGuard\Traits\AttributesAware] trait ArrayAccessible and IteratorAggregate
+
+## [2.1.10] 20220308
+
+- Removed DI (Service Container) implementation (It has been move to [drewlabs/di] library)
+- Added a Nullable Type implementation

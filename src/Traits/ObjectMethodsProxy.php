@@ -32,7 +32,7 @@ trait ObjectMethodsProxy
         try {
             // Call the method on the provided object
             return $object->{$method}(...$args);
-        } catch (\Error | \BadMethodCallException $e) {
+        } catch (\Error|\BadMethodCallException $e) {
             // Call the default method if the specified method does not exits
             if ((null !== $default) && \is_callable($default)) {
                 return $default(...$args);

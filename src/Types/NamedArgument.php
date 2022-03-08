@@ -14,11 +14,11 @@ declare(strict_types=1);
 namespace Drewlabs\Support\Types;
 
 use Drewlabs\Contracts\Support\NamedFuncArgument as NamedFuncArgumentInterface;
-use Drewlabs\Support\Types\Traits\FuncArgument;
+use Drewlabs\Support\Types\Traits\Argument;
 
-class NamedFuncArgument implements NamedFuncArgumentInterface
+class NamedArgument implements NamedFuncArgumentInterface
 {
-    use FuncArgument;
+    use Argument;
 
     /**
      * Parameter holding the state of the parameter.
@@ -42,7 +42,7 @@ class NamedFuncArgument implements NamedFuncArgumentInterface
     public function __construct(
         string $name = 'unknown',
         ?string $type = AbstractTypes::ANY,
-        ?string $state = FuncArgumentEnum::REQUIRED
+        ?string $state = ArgumentType::REQUIRED
     ) {
         $this->name = $name;
         $this->type = $type;
@@ -56,7 +56,7 @@ class NamedFuncArgument implements NamedFuncArgumentInterface
      */
     public function __toString()
     {
-        return sprintf('%s:%s', $this->getType(), $this->isOptional() ? FuncArgumentEnum::OPTIONAL : FuncArgumentEnum::REQUIRED);
+        return sprintf('%s:%s', $this->getType(), $this->isOptional() ? ArgumentType::OPTIONAL : ArgumentType::REQUIRED);
     }
 
     public function getName(): ?string

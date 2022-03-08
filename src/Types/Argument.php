@@ -14,9 +14,9 @@ declare(strict_types=1);
 namespace Drewlabs\Support\Types;
 
 use Drewlabs\Contracts\Support\FuncArgument as SupportFuncArgument;
-use Drewlabs\Support\Types\Traits\FuncArgument as TraitsFuncArgument;
+use Drewlabs\Support\Types\Traits\Argument as TraitsFuncArgument;
 
-class FuncArgument implements SupportFuncArgument
+class Argument implements SupportFuncArgument
 {
     use TraitsFuncArgument;
 
@@ -38,7 +38,7 @@ class FuncArgument implements SupportFuncArgument
 
     public function __construct(
         ?string $type = AbstractTypes::ANY,
-        ?string $state = FuncArgumentEnum::REQUIRED
+        ?string $state = ArgumentType::REQUIRED
     ) {
         $this->type = $type;
         $this->state = $state;
@@ -51,6 +51,6 @@ class FuncArgument implements SupportFuncArgument
      */
     public function __toString()
     {
-        return sprintf('%s:%s', $this->getType(), $this->isOptional() ? FuncArgumentEnum::OPTIONAL : FuncArgumentEnum::REQUIRED);
+        return sprintf('%s:%s', $this->getType(), $this->isOptional() ? ArgumentType::OPTIONAL : ArgumentType::REQUIRED);
     }
 }

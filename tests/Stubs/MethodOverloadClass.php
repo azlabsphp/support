@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Drewlabs\Support\Tests\Stubs;
 
 use Drewlabs\Support\Traits\Overloadable;
-use Drewlabs\Support\Types\FuncArgumentEnum;
+use Drewlabs\Support\Types\ArgumentType;
 
 class MethodOverloadClass
 {
@@ -38,7 +38,7 @@ class MethodOverloadClass
             'methodC' => ['*', '*'],
 
             // // Call methodD if 3 args are passed and the first is an array
-            'methodD' => ['array', \string::class, ['*', FuncArgumentEnum::OPTIONAL]],
+            'methodD' => ['array', \string::class, ['*', ArgumentType::OPTIONAL]],
 
             // // Call methodE if 3 args are passed and the last is a closure
             'methodE' => ['*', '*', \Closure::class],

@@ -18,9 +18,9 @@ use Drewlabs\Contracts\Support\NamedFuncArgument as SupportNamedFuncArgument;
 use Drewlabs\Contracts\Support\OverloadedPartialMethodHandler;
 use Drewlabs\Support\Exceptions\BadMethodCallException;
 use Drewlabs\Support\Types\AbstractTypes;
-use Drewlabs\Support\Types\FuncArgument;
-use Drewlabs\Support\Types\FuncArgumentEnum;
-use Drewlabs\Support\Types\NamedFuncArgument;
+use Drewlabs\Support\Types\Argument;
+use Drewlabs\Support\Types\ArgumentType;
+use Drewlabs\Support\Types\NamedArgument;
 
 class OverloadedMethodHandler implements OverloadedPartialMethodHandler
 {
@@ -182,10 +182,10 @@ class OverloadedMethodHandler implements OverloadedPartialMethodHandler
         $required_arguments = [];
         // #endregion Initialize values
         foreach ($reflectionFunction->getParameters() as $curr) {
-            $arg = new NamedFuncArgument(
+            $arg = new NamedArgument(
                 $curr->getName(),
                 !$curr->hasType() ? AbstractTypes::ANY : $curr->getType()->getName(),
-                $curr->isOptional() ? FuncArgumentEnum::OPTIONAL : FuncArgumentEnum::REQUIRED
+                $curr->isOptional() ? ArgumentType::OPTIONAL : ArgumentType::REQUIRED
             );
             if ($curr->isOptional()) {
                 ++$optinal_args_count;
@@ -219,7 +219,7 @@ class OverloadedMethodHandler implements OverloadedPartialMethodHandler
         // #endregion Initialize values
         foreach ($signature as $curr) {
             $type = AbstractTypes::ANY;
-            $state = FuncArgumentEnum::REQUIRED;
+            $state = ArgumentType::REQUIRED;
             if (\is_string($curr)) {
                 // Argument is required
                 $type = $curr;
@@ -228,16 +228,16 @@ class OverloadedMethodHandler implements OverloadedPartialMethodHandler
                 $total_items = \count($curr);
                 if ($total_items > 0) {
                     $type = $curr[0] ?? AbstractTypes::ANY;
-                    if (($total_items > 1 ? ($curr[1] ?? FuncArgumentEnum::OPTIONAL) : FuncArgumentEnum::REQUIRED) === FuncArgumentEnum::OPTIONAL) {
-                        $state = FuncArgumentEnum::OPTIONAL;
+                    if (($total_items > 1 ? ($curr[1] ?? ArgumentType::OPTIONAL) : ArgumentType::REQUIRED) === ArgumentType::OPTIONAL) {
+                        $state = ArgumentType::OPTIONAL;
                     }
                 }
             } else {
                 // Argument is of type any and is optional
                 $type = AbstractTypes::ANY;
-                $state = FuncArgumentEnum::OPTIONAL;
+                $state = ArgumentType::OPTIONAL;
             }
-            $funcArg = new FuncArgument($type, $state);
+            $funcArg = new Argument($type, $state);
             if ($funcArg->isOptional()) {
                 ++$optinal_args_count;
                 $optional_arguments[] = $funcArg;
@@ -270,16 +270,16 @@ class OverloadedMethodHandler implements OverloadedPartialMethodHandler
         return array_map(static function (FuncArgumentInterface $type) {
             switch ($type->getType()) {
                 case 'int':
-                    return new NamedFuncArgument(
+                    return new NamedArgument(
                         $type instanceof SupportNamedFuncArgument ? $type->getName() : '*',
                         AbstractTypes::STD_INTEGER,
-                        $type->isOptional() ? FuncArgumentEnum::OPTIONAL : FuncArgumentEnum::REQUIRED
+                        $type->isOptional() ? ArgumentType::OPTIONAL : ArgumentType::REQUIRED
                     );
                 case 'bool':
-                    return new NamedFuncArgument(
+                    return new NamedArgument(
                         $type instanceof SupportNamedFuncArgument ? $type->getName() : '*',
                         AbstractTypes::STD_BOOLEAN,
-                        $type->isOptional() ? FuncArgumentEnum::OPTIONAL : FuncArgumentEnum::REQUIRED
+                        $type->isOptional() ? ArgumentType::OPTIONAL : ArgumentType::REQUIRED
                     );
                 default:
                     return $type;
@@ -288,7 +288,7 @@ class OverloadedMethodHandler implements OverloadedPartialMethodHandler
     }
 
     /**
-     * @param FuncArgument[] $arguments
+     * @param Argument[] $arguments
      *
      * @throws \InvalidArgumentException
      *

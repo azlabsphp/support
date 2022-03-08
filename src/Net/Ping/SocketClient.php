@@ -50,7 +50,7 @@ class SocketClient implements ClientInterface
             $sum = array_sum($bit);
 
             while ($sum >> 16) {
-                $sum = ($sum >> 16) + ($sum & 0xffff);
+                $sum = ($sum >> 16) + ($sum & 0xFFFF);
             }
 
             return pack('n*', ~$sum);

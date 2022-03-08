@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Drewlabs\Support\Traits;
 
-use ArrayIterator;
 use Drewlabs\Contracts\Support\OverloadedPartialMethodHandler;
 use Drewlabs\Support\Exceptions\OverloadMethodCallExpection;
 use Drewlabs\Support\Exceptions\TooManyMatchingMethodOverload;
@@ -51,7 +50,7 @@ trait Overloadable
             false
         );
         $handlers = iterator_to_array($handlers);
-        $total_handlers = count($handlers);
+        $total_handlers = \count($handlers);
         if (
             1 === $total_handlers &&
             (1 === \count($fallbacks)) &&
@@ -66,7 +65,7 @@ trait Overloadable
             // Look for the method having a more specific argument type definition
             //
             $handler = drewlabs_core_iter_reduce(
-                new ArrayIterator($handlers),
+                new \ArrayIterator($handlers),
                 static function (?OverloadedPartialMethodHandler $carry, OverloadedPartialMethodHandler $curr) {
                     if (null === $carry) {
                         return $curr;

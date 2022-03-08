@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Drewlabs\Support;
 
 use Drewlabs\Support\Exceptions\UnsupportedConfigurationFileException;
-use Drewlabs\Support\Types\PackageConfigurationManagerMethodsEnum;
+use Drewlabs\Support\Types\ConfigureMethod;
 
 class PackagesConfigurationManifest
 {
@@ -43,10 +43,10 @@ class PackagesConfigurationManifest
             // $value is either string or or array
             if (\is_array($value)) {
                 $total_count = \count($value);
-                $method = $total_count > 1 ? $value[0] : PackageConfigurationManagerMethodsEnum::DEFAUL_CONFIGURATION_METHOD_NAME;
+                $method = $total_count > 1 ? $value[0] : ConfigureMethod::NAME;
                 $params = $total_count > 1 ? $value[1] : $value[0];
             } else {
-                $method = PackageConfigurationManagerMethodsEnum::DEFAUL_CONFIGURATION_METHOD_NAME;
+                $method = ConfigureMethod::NAME;
                 $params = $value;
             }
             // If the params is array transform the first item of the array

@@ -13,13 +13,13 @@ declare(strict_types=1);
 
 namespace Drewlabs\Support\Types\Traits;
 
-use Drewlabs\Support\Types\FuncArgumentEnum;
+use Drewlabs\Support\Types\ArgumentType;
 
-trait FuncArgument
+trait Argument
 {
     public function isOptional(): bool
     {
-        return FuncArgumentEnum::OPTIONAL === $this->state;
+        return ArgumentType::OPTIONAL === $this->state;
     }
 
     /**

@@ -18,13 +18,10 @@ use Drewlabs\Contracts\Support\ArrayableInterface;
 use Drewlabs\Core\Helpers\Functional;
 use Drewlabs\Core\Helpers\Iter;
 use Drewlabs\Support\Collections\Collectors\ArrayCollector;
-use IteratorAggregate;
-use LogicException;
-use Traversable;
 
 use Drewlabs\Support\Collections\Contracts\StreamInterface;
 
-class Stream implements IteratorAggregate, StreamInterface, ArrayableInterface
+class Stream implements \IteratorAggregate, StreamInterface, ArrayableInterface
 {
     /**
      * @var array<Closure<>>
@@ -71,13 +68,13 @@ class Stream implements IteratorAggregate, StreamInterface, ArrayableInterface
     }
 
     /**
-     * Create a stream from a range of values
-     * 
-     * @param int $start 
-     * @param int $end 
-     * @param int $steps 
-     * @return Stream 
-     * @throws LogicException 
+     * Create a stream from a range of values.
+     *
+     * @param int $steps
+     *
+     * @throws \LogicException
+     *
+     * @return Stream
      */
     public static function range(int $start, int $end, $steps = 1)
     {
@@ -128,6 +125,7 @@ class Stream implements IteratorAggregate, StreamInterface, ArrayableInterface
                 return $result->value;
             }
         }
+
         return Functional::isCallable($default) ? \call_user_func($default) : $default;
     }
 
@@ -139,26 +137,27 @@ class Stream implements IteratorAggregate, StreamInterface, ArrayableInterface
     public function take(int $n)
     {
         $this->infinite = false;
-        $this->source = (function ($source) use ($n) {
+        $this->source = (static function ($source) use ($n) {
             $index = 0;
             foreach ($source as $current) {
-                $index++;
+                ++$index;
                 if ($index > $n) {
                     break;
                 }
                 yield $current;
             }
         })($this->source);
+
         return $this;
     }
 
     public function takeUntil($value)
     {
         $this->infinite = false;
-        $value = $this->isCallable($value) ? $value : function ($current)  use ($value) {
+        $value = $this->isCallable($value) ? $value : static function ($current) use ($value) {
             return $current === $value;
         };
-        $this->source = (function ($source) use ($value) {
+        $this->source = (static function ($source) use ($value) {
             while ($source->valid()) {
                 $current = $source->current();
                 if ($value($current, $source->key())) {
@@ -168,47 +167,51 @@ class Stream implements IteratorAggregate, StreamInterface, ArrayableInterface
                 $source->next();
             }
         })($this->source);
+
         return $this;
     }
 
     public function takeWhile($value, $flexible = true)
     {
-        $value = $this->isCallable($value) ? $value : function ($data) use ($value) {
+        $value = $this->isCallable($value) ? $value : static function ($data) use ($value) {
             return $data === $value;
         };
-        $this->source = (function ($source) use ($value, $flexible) {
+        $this->source = (static function ($source) use ($value, $flexible) {
             while ($source->valid()) {
                 $current = $source->current();
                 if ($result = $value($current, $source->key())) {
                     yield $current;
                 }
-                if (!(bool)$flexible && !(bool)$result) {
+                if (!(bool) $flexible && !(bool) $result) {
                     break;
                 }
                 $source->next();
             }
         })($this->source);
+
         return $this;
     }
 
     /**
-     * Set an offset on the number of stream data
-     * 
-     * @param mixed $n 
-     * @return $this 
+     * Set an offset on the number of stream data.
+     *
+     * @param mixed $n
+     *
+     * @return $this
      */
     public function skip(int $n)
     {
-        $this->source = (function ($source) use ($n) {
+        $this->source = (static function ($source) use ($n) {
             $index = 0;
             foreach ($source as $current) {
-                $index++;
+                ++$index;
                 if ($index <= $n) {
                     continue;
                 }
                 yield $current;
             }
         })($this->source);
+
         return $this;
     }
 
@@ -226,9 +229,10 @@ class Stream implements IteratorAggregate, StreamInterface, ArrayableInterface
     {
         $this->_throwIfUnsafe();
         $composedFunc = Functional::compose(...$this->pipe);
-        return call_user_func(
+
+        return \call_user_func(
             $collector,
-            (function ($source) use (&$composedFunc) {
+            (static function ($source) use (&$composedFunc) {
                 foreach ($source as $value) {
                     $result = $composedFunc(StreamInput::wrap($value));
                     if (!$result->accepts()) {
@@ -242,13 +246,17 @@ class Stream implements IteratorAggregate, StreamInterface, ArrayableInterface
 
     public function toArray()
     {
-        return $this->collect(new ArrayCollector);
+        return $this->collect(new ArrayCollector());
+    }
+
+    public function getIterator(): \Traversable
+    {
+        return $this->source;
     }
 
     private function createOperator($callback = null)
     {
-        return new class($callback)
-        {
+        return new class($callback) {
             private $closure;
 
             public function __construct($closure = null)
@@ -272,14 +280,9 @@ class Stream implements IteratorAggregate, StreamInterface, ArrayableInterface
         };
     }
 
-    public function getIterator(): Traversable
-    {
-        return $this->source;
-    }
-
     private function isCallable($value)
     {
-        return !is_string($value) && is_callable($value);
+        return !\is_string($value) && \is_callable($value);
     }
 
     private function _throwIfUnsafe()

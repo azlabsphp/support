@@ -13,8 +13,6 @@ declare(strict_types=1);
 
 namespace Drewlabs\Support\Compact;
 
-use Generator;
-
 class PhpStdClass extends \stdClass implements \ArrayAccess
 {
     /**
@@ -108,7 +106,7 @@ class PhpStdClass extends \stdClass implements \ArrayAccess
      * }
      * ```
      *
-     * @return Generator<int, mixed, mixed, void>
+     * @return \Generator<int, mixed, mixed, void>
      */
     public function each(\Closure $callback)
     {
@@ -128,7 +126,7 @@ class PhpStdClass extends \stdClass implements \ArrayAccess
      * }
      * ```
      *
-     * @return Generator<int, mixed, mixed, void>
+     * @return \Generator<int, mixed, mixed, void>
      */
     public function forEach(\Closure $callback)
     {

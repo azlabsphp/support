@@ -11,21 +11,17 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Drewlabs\Support\DI;
+namespace Drewlabs\Support\Types;
 
-interface ContextualBindingsBuilder
+class ArgumentType
 {
     /**
-     * @param string $abstract
-     *
-     * @return self
+     * Required parameter enumeration value.
      */
-    public function require($abstract);
+    public const REQUIRED = 'required';
 
     /**
-     * @param string|\Closure|array $implementation
-     *
-     * @return void
+     * Optional parameter enumeration value.
      */
-    public function provide($implementation);
+    public const OPTIONAL = 'optional';
 }
