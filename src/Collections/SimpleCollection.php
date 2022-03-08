@@ -249,7 +249,7 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, \Json
     public function map($callback, bool $preserve_key = true)
     {
         if (!($callback instanceof \Closure) || !\is_callable($callback)) {
-            throw new \InvalidArgumentException('Expect parameter 1 to be an instance of \Closure, or php callable, got : '.\gettype($callback));
+            throw new \InvalidArgumentException('Expect parameter 1 to be an instance of \Closure, or php callable, got : ' . \gettype($callback));
         }
 
         return new static(
@@ -979,7 +979,7 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, \Json
         $collection = new static($this);
         $end = $collection->pop();
 
-        return $collection->implode($glue).$before_last.$end;
+        return $collection->implode($glue) . $before_last . $end;
     }
 
     /**
@@ -1093,7 +1093,7 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, \Json
         $flatten_func = static function ($array, $depth) use (&$flatten_func) {
             $result = [];
             foreach ($array as $item) {
-                $item = method_exists($item, 'all') ? $item->all() : $item;
+                $item = (is_object($item) || is_string($item)) && method_exists($item, 'all') ? $item->all() : $item;
                 if (!\is_array($item)) {
                     $result[] = $item;
                 } else {
@@ -1211,7 +1211,7 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, \Json
      */
     public function except($keys)
     {
-        if (method_exists($keys, 'all')) {
+        if ((is_object($keys) || is_string($keys)) && method_exists($keys, 'all')) {
             $keys = $keys->all();
         } elseif (!\is_array($keys)) {
             $keys = \func_get_args();
