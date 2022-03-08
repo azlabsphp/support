@@ -15,11 +15,9 @@ namespace Drewlabs\Support\Tests\Unit;
 
 use Drewlabs\Support\Tests\TestCase;
 use Drewlabs\Support\Types\Nullable;
-use stdClass;
 
 class NullableTest extends TestCase
 {
-
     public function test_for_php_null()
     {
         $value = new Nullable(null);
@@ -31,33 +29,31 @@ class NullableTest extends TestCase
     public function test_nullable_with_default()
     {
         $value = new Nullable(null, 3);
-        $this->assertEquals(3, $value->value());
+        $this->assertSame(3, $value->value());
         $this->assertTrue($value->hasValue());
         $this->assertFalse($value->isNull());
-
     }
 
     public function test_default_closure()
     {
-        $value = new Nullable(null, function() {
+        $value = new Nullable(null, static function () {
             return 'Hello World!';
         });
-        $this->assertEquals($value->value(), 'Hello World!');
+        $this->assertSame($value->value(), 'Hello World!');
     }
 
     public function test_php_primitive()
     {
         $value = new Nullable('Hello World!');
-        $this->assertEquals($value->value(), 'Hello World!');
+        $this->assertSame($value->value(), 'Hello World!');
         $this->assertTrue($value->hasValue());
         $this->assertFalse($value->isNull());
-
     }
 
     public function test_php_object()
     {
-        $value = new Nullable(new stdClass);
-        $this->assertInstanceOf(stdClass::class, $value->value());
+        $value = new Nullable(new \stdClass());
+        $this->assertInstanceOf(\stdClass::class, $value->value());
         $this->assertTrue($value->hasValue());
         $this->assertFalse($value->isNull());
     }

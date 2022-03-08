@@ -39,6 +39,7 @@ class Nullable
     public function hasValue()
     {
         $tmp = $this->value_ ?? $this->resolveClosure();
+
         return null !== $tmp;
     }
 
@@ -49,8 +50,8 @@ class Nullable
 
     private function resolveClosure()
     {
-        return is_callable($this->default_) && !is_string($this->default_) ?
-            call_user_func($this->default_) :
+        return \is_callable($this->default_) && !\is_string($this->default_) ?
+            \call_user_func($this->default_) :
             $this->default_;
     }
 }
