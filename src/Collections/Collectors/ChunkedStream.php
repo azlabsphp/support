@@ -19,14 +19,14 @@ use Drewlabs\Support\Collections\Stream;
 
 class ChunkedStream implements CollectorInterface
 {
-    public const SIZE_LIMIT = 1024;
+    public const SIZE_LIMIT = 512;
 
     /**
      * @var int
      */
     private $size;
 
-    public function __construct($size = 1024)
+    public function __construct($size = 512)
     {
         $this->size = $size ? (int) $size : static::SIZE_LIMIT;
     }
