@@ -14,6 +14,8 @@ declare(strict_types=1);
 namespace Drewlabs\Support\Immutable;
 
 use Drewlabs\Contracts\Data\Model\Model;
+use Drewlabs\Core\Helpers\Arr;
+use Drewlabs\Core\Helpers\Str;
 use Drewlabs\Support\Traits\MethodProxy;
 
 /**
@@ -24,7 +26,7 @@ abstract class ModelValueObject extends ValueObject
     use MethodProxy;
 
     /**
-     * @var Model
+     * @var Model|mixed
      */
     private $___model;
 
@@ -91,6 +93,30 @@ abstract class ModelValueObject extends ValueObject
 
     public function toArray()
     {
-        return $this->attributesToArray();
+        $attributes = $this->attributesToArray();
+        $hidden = array_merge($this->getHidden());
+        // TODO: GET MODEL RELATIONS
+        foreach ($this->___model->getRelations() as $key => $value) {
+            if (in_array($key, $hidden)) {
+                continue;
+            }
+            // #region TODO: Uncomment the code below to remove relations columns that
+            // are specified in the _columns query parameters
+            // TODO: Provide a better implementation to avoid performance heck or
+            // remove implementation that strip hidden sub attributes as it can impact 
+            // application performance for large datasets.
+            $props = [];
+            foreach ($hidden as $k => $v) {
+                if (Str::startsWith($v, $key)) {
+                    $props[] = Str::after("$key.", $v);
+                    unset($hidden[$k]);
+                    continue;
+                }
+            }
+            $attributes[$key] = Arr::except($value->attributesToArray(), $props);
+            // #endregion TODO
+            // $attributes[$key] = $value;
+        }
+        return $attributes;
     }
 }

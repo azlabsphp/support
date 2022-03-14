@@ -21,3 +21,7 @@
 
 - Removed DI (Service Container) implementation (It has been move to [drewlabs/di] library)
 - Added a Nullable Type implementation
+
+## [2.2.10] 20220314
+
+- [Drewlabs\Support\Immutable\ModelValueObject::toArray()] now appends dynamically relationships to list of attribute columns client requested for them.
