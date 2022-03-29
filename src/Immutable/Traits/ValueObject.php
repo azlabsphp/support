@@ -16,6 +16,10 @@ namespace Drewlabs\Support\Immutable\Traits;
 use Drewlabs\Support\Compact\PhpStdClass;
 use Drewlabs\Support\Immutable\Exceptions\ImmutableObjectException;
 
+/**
+ * @deprecated v2.2.x Implementation in drewlabs/php-value is 
+ *             more up to date and feature richer than this implementation
+ */
 trait ValueObject
 {
     use Accessible;
@@ -54,6 +58,9 @@ trait ValueObject
     private $___isAssociative = false;
 
     /**
+     * @deprecated v2.2.x Implementation in drewlabs/php-value is 
+     *             more up to date and feature richer than this implementation
+     * 
      * Creates an instance of Drewlabs\Support\Immutable\ValueObject::class.
      *
      * @param array|object $attributes
@@ -70,6 +77,8 @@ trait ValueObject
 
     /**
      * Makes class attributes accessible through -> syntax.
+     * @deprecated v2.2.x Implementation in drewlabs/php-value is 
+     *             more up to date and feature richer than this implementation
      *
      * @param $name
      *
@@ -129,6 +138,9 @@ trait ValueObject
 
     /**
      * {@inheritDoc}
+     * 
+     * @deprecated v2.2.x Implementation in drewlabs/php-value is 
+     *             more up to date and feature richer than this implementation
      *
      * Creates a copy of the current object changing the changing old attributes
      * values with newly proivided ones
@@ -174,6 +186,9 @@ trait ValueObject
 
     /**
      * {@inheritDoc}
+     * 
+     * @deprecated v2.2.x Implementation in drewlabs/php-value is 
+     *             more up to date and feature richer than this implementation
      *
      * JSON Serializable method definition. It convert
      * class attributes to a json object aka PHP array, string, object etc...
@@ -185,7 +200,8 @@ trait ValueObject
     }
 
     /**
-     * {@inheritDoc}
+     * @deprecated v2.2.x Implementation in drewlabs/php-value is 
+     *             more up to date and feature richer than this implementation
      */
     public function attributesToArray()
     {
@@ -209,7 +225,8 @@ trait ValueObject
     }
 
     /**
-     * [[loadGuardedAttributes]] property getter.
+     * @deprecated v2.2.x Implementation in drewlabs/php-value is 
+     *             more up to date and feature richer than this implementation
      *
      * @return bool
      */
@@ -222,6 +239,9 @@ trait ValueObject
 
     /**
      * Query for the provided $key in the object attribute.
+     * 
+     * @deprecated v2.2.x Implementation in drewlabs/php-value is 
+     *             more up to date and feature richer than this implementation
      *
      * @param \Closure|mixed|null $default
      *
@@ -247,6 +267,15 @@ trait ValueObject
                 $default) : $callback($key, $default);
     }
 
+    /**
+     * 
+     * @deprecated v2.2.x Implementation in drewlabs/php-value is 
+     *             more up to date and feature richer than this implementation
+     * 
+     * @param array $value 
+     * 
+     * @return self 
+     */
     public function setHidden(array $value)
     {
         $this->___hidden = $value;
@@ -254,6 +283,13 @@ trait ValueObject
         return $this;
     }
 
+    /**
+     * 
+     * @deprecated v2.2.x Implementation in drewlabs/php-value is 
+     *             more up to date and feature richer than this implementation
+     * 
+     * @return array 
+     */
     public function getHidden()
     {
         return $this->___hidden;
@@ -261,6 +297,9 @@ trait ValueObject
 
     /**
      * Merge hidden property values.
+     * 
+     * @deprecated v2.2.x Implementation in drewlabs/php-value is 
+     *             more up to date and feature richer than this implementation
      *
      * @return self
      */
@@ -273,6 +312,9 @@ trait ValueObject
 
     /**
      * Merge object attributes.
+     * 
+     * @deprecated v2.2.x Implementation in drewlabs/php-value is 
+     *             more up to date and feature richer than this implementation
      *
      * @return self
      */
@@ -311,10 +353,10 @@ trait ValueObject
     protected function callAttributeDeserializer($name, $value)
     {
         if ($this->_propertySetterExists($name)) {
-            return $this->{'set'.drewlabs_core_strings_as_camel_case($name).'Attribute'}($value);
+            return $this->{'set' . drewlabs_core_strings_as_camel_case($name) . 'Attribute'}($value);
         }
         if ($this->_propertyDeserializerExists($name)) {
-            return $this->{'deserialize'.drewlabs_core_strings_as_camel_case($name).'Attribute'}($value);
+            return $this->{'deserialize' . drewlabs_core_strings_as_camel_case($name) . 'Attribute'}($value);
         }
 
         return $value;
@@ -323,10 +365,10 @@ trait ValueObject
     protected function callAttributeSerializer($name)
     {
         if ($this->_propertyGetterExists($name)) {
-            return $this->{'get'.drewlabs_core_strings_as_camel_case($name).'Attribute'}();
+            return $this->{'get' . drewlabs_core_strings_as_camel_case($name) . 'Attribute'}();
         }
         if ($this->_propertySerializerExists($name)) {
-            return $this->{'serialize'.drewlabs_core_strings_as_camel_case($name).'Attribute'}();
+            return $this->{'serialize' . drewlabs_core_strings_as_camel_case($name) . 'Attribute'}();
         }
 
         return $this->___attributes[$name] ?? null;
@@ -373,6 +415,9 @@ trait ValueObject
 
     /**
      * @param mixed $value
+     * 
+     * @deprecated v2.2.x Implementation in drewlabs/php-value is 
+     *             more up to date and feature richer than this implementation
      *
      * @return self
      */
@@ -385,6 +430,9 @@ trait ValueObject
 
     /**
      * Attributes setter internal method.
+     * 
+     * @deprecated v2.2.x Implementation in drewlabs/php-value is 
+     *             more up to date and feature richer than this implementation
      *
      * @param bool $setGuarded
      *
@@ -425,6 +473,9 @@ trait ValueObject
 
     /**
      * Internal attribute setter method.
+     * 
+     * @deprecated v2.2.x Implementation in drewlabs/php-value is 
+     *             more up to date and feature richer than this implementation
      *
      * @param mixed $value
      *
@@ -466,21 +517,21 @@ trait ValueObject
 
     private function _propertyGetterExists($name)
     {
-        return method_exists($this, 'get'.drewlabs_core_strings_as_camel_case($name).'Attribute');
+        return method_exists($this, 'get' . drewlabs_core_strings_as_camel_case($name) . 'Attribute');
     }
 
     private function _propertySerializerExists($name)
     {
-        return method_exists($this, 'serialize'.drewlabs_core_strings_as_camel_case($name).'Attribute');
+        return method_exists($this, 'serialize' . drewlabs_core_strings_as_camel_case($name) . 'Attribute');
     }
 
     private function _propertySetterExists($name)
     {
-        return method_exists($this, 'set'.drewlabs_core_strings_as_camel_case($name).'Attribute');
+        return method_exists($this, 'set' . drewlabs_core_strings_as_camel_case($name) . 'Attribute');
     }
 
     private function _propertyDeserializerExists($name)
     {
-        return method_exists($this, 'deserialize'.drewlabs_core_strings_as_camel_case($name).'Attribute');
+        return method_exists($this, 'deserialize' . drewlabs_core_strings_as_camel_case($name) . 'Attribute');
     }
 }

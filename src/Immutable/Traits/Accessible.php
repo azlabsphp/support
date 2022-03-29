@@ -15,6 +15,10 @@ namespace Drewlabs\Support\Immutable\Traits;
 
 use Drewlabs\Support\Immutable\Exceptions\ImmutableObjectException;
 
+/**
+ * @deprecated v2.2.x Implementation in drewlabs/php-value is 
+ *             more up to date and feature richer than this implementation
+ */
 trait Accessible
 {
     public function __isset($name)

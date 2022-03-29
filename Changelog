@@ -1,10 +1,10 @@
-# v2022011020051
+# [2.0.15] 2022-01-10
 
 - Added mergeHidden() method to ValueObject trait
 - Added merge() method to ValueObject trait
 - Added copy() method to ValueObject trait
 
-## v202201252020
+## [2.0.20] 2022-01-25
 
 - Added a simple DI manager class
 
@@ -13,15 +13,20 @@
 - Added [\Drewlabs\AuthHttpGuard\Traits\AttributesAware] trait
 - Added [\Drewlabs\Support\Net\Ping\Client] for pinging tcp resources availability
 
-## v202201282031
+## [2.0.31] 2022-01-28
 
 - Makes [\Drewlabs\AuthHttpGuard\Traits\AttributesAware] trait ArrayAccessible and IteratorAggregate
 
-## [2.1.10] 20220308
+## [2.1.10] 2022-03-08
 
 - Removed DI (Service Container) implementation (It has been move to [drewlabs/di] library)
 - Added a Nullable Type implementation
 
-## [2.2.10] 20220314
+## [2.2.10] 2022-03-14
 
 - [Drewlabs\Support\Immutable\ModelValueObject::toArray()] now appends dynamically relationships to list of attribute columns client requested for them.
+
+## [2.3.0] 2022-03-29
+
+- Add Deprecation note to `ValueObject` and `ModelValueObject` implementations in favour of implementation from php-value package which is feature rich and more up to date
+- Removed accidental Net library implementation

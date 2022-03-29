@@ -18,5 +18,5 @@ class ConfigureMethod
     /**
      * Defines the configure method name of configuration providers.
      */
-    public const NAME = 'configure';
+    public const VALUE = 'configure';
 }

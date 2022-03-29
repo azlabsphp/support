@@ -43,10 +43,10 @@ class PackagesConfigurationManifest
             // $value is either string or or array
             if (\is_array($value)) {
                 $total_count = \count($value);
-                $method = $total_count > 1 ? $value[0] : ConfigureMethod::NAME;
+                $method = $total_count > 1 ? $value[0] : ConfigureMethod::VALUE;
                 $params = $total_count > 1 ? $value[1] : $value[0];
             } else {
-                $method = ConfigureMethod::NAME;
+                $method = ConfigureMethod::VALUE;
                 $params = $value;
             }
             // If the params is array transform the first item of the array
