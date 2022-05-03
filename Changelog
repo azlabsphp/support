@@ -31,7 +31,7 @@
 - Add Deprecation note to `ValueObject` and `ModelValueObject` implementations in favour of implementation from php-value package which is feature rich and more up to date
 - Removed accidental Net library implementation
 
-## [2.3.1] 2022-05-03
+## [2.3.2] 2022-05-03
 
 - Added TreeView builder class
 - Added LinkedList implementation to handle ChunkStream implementation
