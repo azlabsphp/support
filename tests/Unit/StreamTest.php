@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Drewlabs\Support\Tests\Unit;
 
 use Drewlabs\Support\Collections\Collectors\ArrayCollector;
-use Drewlabs\Support\Collections\Collectors\ChunkedStream;
+use Drewlabs\Support\Collections\Collectors\ChunkCollector;
 use Drewlabs\Support\Collections\Stream;
 use Drewlabs\Support\Tests\TestCase;
 
@@ -75,7 +75,7 @@ class StreamTest extends TestCase
                 0
             ),
             $stream->take(10)
-                ->reduce(0, static function ($carry, $current) {
+                ->reduce(static function ($carry, $current) {
                     $carry += $current;
 
                     return $carry;
@@ -146,7 +146,7 @@ class StreamTest extends TestCase
         $stream = Stream::range(1, 100);
         $this->assertSame(
             $stream
-                ->collect(new ChunkedStream(90))
+                ->collect(new ChunkCollector(90))
                 ->toArray(),
             [range(1, 90), range(91, 100)]
         );

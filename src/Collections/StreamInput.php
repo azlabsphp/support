@@ -15,31 +15,38 @@ namespace Drewlabs\Support\Collections;
 
 class StreamInput
 {
+
+    /**
+     * @var \Closure|bool
+     */
+    private $predicate;
+
+    /**
+     * @var mixed
+     */
+    public $value;
+
+    /**
+     * 
+     * @param mixed $value 
+     * @param bool|callable $predicate 
+     * @return void 
+     */
+    public function __construct($value, $predicate)
+    {
+        $this->value = $value;
+        $this->predicate = $predicate;
+    }
+
+    public function accepts()
+    {
+        return \is_bool($this->predicate) ?
+            $this->predicate :
+            \call_user_func($this->predicate, $this->value);
+    }
+
     public static function wrap($source, $accepts = true)
     {
-        return new class($source, $accepts) {
-            /**
-             * @var \Closure|bool
-             */
-            private $predicate;
-
-            /**
-             * @var mixed
-             */
-            public $value;
-
-            public function __construct($value, $predicate)
-            {
-                $this->value = $value;
-                $this->predicate = $predicate;
-            }
-
-            public function accepts()
-            {
-                return \is_bool($this->predicate) ?
-                    $this->predicate :
-                    \call_user_func($this->predicate, $this->value);
-            }
-        };
+        return new self($source, $accepts);
     }
 }

@@ -20,26 +20,44 @@ interface StreamInterface extends Collectable
      *
      * @param callable|\Closure $callback
      *
-     * @return self|ArrayableInterface
+     * @return self|Arrayable
      */
     public function map(callable $callback);
 
     /**
-     * Set a reducer that should be applied to a stream data.
+     * Set a reducer that should be applied to a stream data. If the identity value
+     * is omitted, meaning if the only a single parameter is passed, the parameter is
+     * consider to be the reducer function.
+     * 
+     * ```php
+     * 
+     * $result = $stream->take(10)
+     *              ->reduce(static function ($carry, $current) {
+     *                      $carry += $current;
+     *                      return $carry;
+     *              });
+     * 
+     * // Is same as
+     * $result = $stream->take(10)
+     *              ->reduce(0, static function ($carry, $current) {
+     *                      $carry += $current;
+     *                      return $carry;
+     *              });
+     * ```
      *
-     * @param mixed           $identity
-     * @param \Closure<R,T,R> $reducer
+     * @param mixed|callable           $identityOrFunc
+     * @param \Closure<R,T,R>|null $reducer
      *
      * @throws Exception
      *
      * @return mixed
      */
-    public function reduce($identity, callable $reducer);
+    public function reduce($identityOrFunc, callable $reducer = null);
 
     /**
      * Apply filtering to the stream using a predicate function.
      *
-     * @return self|ArrayableInterface
+     * @return self|Arrayable
      */
     public function filter(callable $predicate);
 
@@ -55,7 +73,7 @@ interface StreamInterface extends Collectable
      *
      * @param callable|mixed $value
      *
-     * @return self|ArrayableInterface
+     * @return self|Arrayable
      */
     public function takeUntil($value);
 
@@ -70,7 +88,7 @@ interface StreamInterface extends Collectable
      * @param mixed $value
      * @param bool  $flexible
      *
-     * @return self|ArrayableInterface
+     * @return self|Arrayable
      */
     public function takeWhile($value, $flexible = true);
 
@@ -79,7 +97,7 @@ interface StreamInterface extends Collectable
      *
      * @param mixed $n
      *
-     * @return self|ArrayableInterface
+     * @return self|Arrayable
      */
     public function skip(int $n);
 
