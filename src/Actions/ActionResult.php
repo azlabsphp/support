@@ -14,17 +14,25 @@ declare(strict_types=1);
 namespace Drewlabs\Support\Actions;
 
 use Drewlabs\Contracts\Support\Actions\ActionResult as ActionsActionResult;
-use Drewlabs\Support\Immutable\ValueObject;
+use Drewlabs\Contracts\Support\ArrayableInterface;
 use Drewlabs\Support\Traits\MethodProxy;
+use JsonSerializable;
+use LogicException;
 
 /**
  * Provide an implementation to the {@link ActionResult} interface
  * that will be easilly serializable to the value it wrapp.
  *
  * */
-class ActionResult extends ValueObject implements ActionsActionResult
+class ActionResult implements ActionsActionResult, JsonSerializable, ArrayableInterface
 {
     use MethodProxy;
+
+    /**
+     *
+     * @var mixed
+     */
+    private $value_;
 
     /**
      * Class instances initializer. It takes as parameter the value to wrap.
@@ -35,7 +43,7 @@ class ActionResult extends ValueObject implements ActionsActionResult
      */
     public function __construct($data)
     {
-        parent::__construct(['value' => $data]);
+        $this->value_ = $data;
     }
 
     public function __call($name, $arguments)
@@ -47,6 +55,14 @@ class ActionResult extends ValueObject implements ActionsActionResult
             return $this->proxy($value, $name, $arguments);
         }
         throw new \BadMethodCallException("Method $name does not exists on ".__CLASS__);
+    }
+
+    public function __get($name)
+    {
+        if (null !== $this->value_ && is_object($this->value_)) {
+            return $this->value_->{$name};
+        }
+        throw new LogicException("$name does not exists on " . is_object($this->value_) && null !== $this->value_ ? get_class($this->value_) : gettype($this->value_));
     }
 
     public function value()
@@ -64,12 +80,5 @@ class ActionResult extends ValueObject implements ActionsActionResult
     public function jsonSerialize()
     {
         return $this->value_;
-    }
-
-    protected function getJsonableAttributes()
-    {
-        return [
-            'value_' => 'value',
-        ];
     }
 }
