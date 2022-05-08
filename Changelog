@@ -36,3 +36,7 @@
 - Added TreeView builder class
 - Added LinkedList implementation to handle ChunkStream implementation
 - Added missing Stream interface methods to ChunkStream class
+
+## [2.3.3] 2022-05-07
+
+- Removed inheritance of ValueObject from ActionResult and Action classes
