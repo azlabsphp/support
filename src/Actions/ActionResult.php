@@ -77,6 +77,7 @@ class ActionResult implements ActionsActionResult, JsonSerializable, ArrayableIn
         ];
     }
 
+    #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
         return $this->value_;

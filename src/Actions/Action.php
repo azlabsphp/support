@@ -14,10 +14,40 @@ declare(strict_types=1);
 namespace Drewlabs\Support\Actions;
 
 use Drewlabs\Contracts\Support\Actions\Action as ActionsAction;
-use Drewlabs\Support\Immutable\ValueObject;
+use Drewlabs\Contracts\Support\ArrayableInterface;
+use JsonSerializable;
 
-class Action extends ValueObject implements ActionsAction
+class Action implements
+    ActionsAction,
+    JsonSerializable,
+    ArrayableInterface
 {
+    /**
+     * 
+     * @var string
+     */
+    private $type_;
+
+    /**
+     * 
+     * @var mixed
+     */
+    private $payload_;
+
+    public function __construct(array $attributes = [])
+    {
+        $this->type_ = $attributes['type'] ?? null;
+        $this->payload_ = $attributes['payload'] ?? null;
+    }
+
+    public function create(string $type, $payload)
+    {
+        return new self([
+            'type' => $type,
+            'payload' => $payload,
+        ]);
+    }
+
     public function type()
     {
         return $this->type_;
@@ -28,11 +58,17 @@ class Action extends ValueObject implements ActionsAction
         return $this->payload_;
     }
 
-    protected function getJsonableAttributes()
+    public function toArray()
     {
         return [
-            'type_' => 'type',
-            'payload_' => 'payload',
+            'type' => $this->type_,
+            'payload' => $this->payload_,
         ];
+    }
+
+    #[\ReturnTypeWillChange]
+    public function jsonSerialize()
+    {
+        return $this->toArray();
     }
 }
