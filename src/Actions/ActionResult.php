@@ -16,20 +16,17 @@ namespace Drewlabs\Support\Actions;
 use Drewlabs\Contracts\Support\Actions\ActionResult as ActionsActionResult;
 use Drewlabs\Contracts\Support\ArrayableInterface;
 use Drewlabs\Support\Traits\MethodProxy;
-use JsonSerializable;
-use LogicException;
 
 /**
  * Provide an implementation to the {@link ActionResult} interface
  * that will be easilly serializable to the value it wrapp.
  *
  * */
-class ActionResult implements ActionsActionResult, JsonSerializable, ArrayableInterface
+class ActionResult implements ActionsActionResult, \JsonSerializable, ArrayableInterface
 {
     use MethodProxy;
 
     /**
-     *
      * @var mixed
      */
     private $value_;
@@ -59,10 +56,10 @@ class ActionResult implements ActionsActionResult, JsonSerializable, ArrayableIn
 
     public function __get($name)
     {
-        if (null !== $this->value_ && is_object($this->value_)) {
+        if (null !== $this->value_ && \is_object($this->value_)) {
             return $this->value_->{$name};
         }
-        throw new LogicException("$name does not exists on " . is_object($this->value_) && null !== $this->value_ ? get_class($this->value_) : gettype($this->value_));
+        throw new \LogicException("$name does not exists on ".\is_object($this->value_) && null !== $this->value_ ? \get_class($this->value_) : \gettype($this->value_));
     }
 
     public function value()

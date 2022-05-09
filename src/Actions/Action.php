@@ -15,21 +15,15 @@ namespace Drewlabs\Support\Actions;
 
 use Drewlabs\Contracts\Support\Actions\Action as ActionsAction;
 use Drewlabs\Contracts\Support\ArrayableInterface;
-use JsonSerializable;
 
-class Action implements
-    ActionsAction,
-    JsonSerializable,
-    ArrayableInterface
+class Action implements ActionsAction, \JsonSerializable, ArrayableInterface
 {
     /**
-     * 
      * @var string
      */
     private $type_;
 
     /**
-     * 
      * @var mixed
      */
     private $payload_;

@@ -97,13 +97,13 @@ abstract class ModelValueObject extends ValueObject
         $hidden = array_merge($this->getHidden());
         // TODO: GET MODEL RELATIONS
         foreach ($this->___model->getRelations() as $key => $value) {
-            if (in_array($key, $hidden)) {
+            if (\in_array($key, $hidden, true)) {
                 continue;
             }
             // #region TODO: Uncomment the code below to remove relations columns that
             // are specified in the _columns query parameters
             // TODO: Provide a better implementation to avoid performance heck or
-            // remove implementation that strip hidden sub attributes as it can impact 
+            // remove implementation that strip hidden sub attributes as it can impact
             // application performance for large datasets.
             $props = [];
             foreach ($hidden as $k => $v) {
@@ -117,6 +117,7 @@ abstract class ModelValueObject extends ValueObject
             // #endregion TODO
             // $attributes[$key] = $value;
         }
+
         return $attributes;
     }
 }

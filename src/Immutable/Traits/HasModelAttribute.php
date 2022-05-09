@@ -14,8 +14,9 @@ declare(strict_types=1);
 namespace Drewlabs\Support\Immutable\Traits;
 
 use Drewlabs\Contracts\Data\Model\Model;
+
 /**
- * @deprecated v2.2.x Implementation in drewlabs/php-value is 
+ * @deprecated v2.2.x Implementation in drewlabs/php-value is
  *             more up to date and feature richer than this implementation
  */
 trait HasModelAttribute

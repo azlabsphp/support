@@ -15,6 +15,10 @@ namespace Drewlabs\Support\Collections;
 
 class StreamInput
 {
+    /**
+     * @var mixed
+     */
+    public $value;
 
     /**
      * @var \Closure|bool
@@ -22,15 +26,10 @@ class StreamInput
     private $predicate;
 
     /**
-     * @var mixed
-     */
-    public $value;
-
-    /**
-     * 
-     * @param mixed $value 
-     * @param bool|callable $predicate 
-     * @return void 
+     * @param mixed         $value
+     * @param bool|callable $predicate
+     *
+     * @return void
      */
     public function __construct($value, $predicate)
     {

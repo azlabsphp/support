@@ -1,5 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * This file is part of the Drewlabs package.
+ *
+ * (c) Sidoine Azandrew <azandrewdevelopper@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 namespace Drewlabs\Support\Tests\Unit;
 
@@ -27,13 +37,13 @@ class TreeViewTest extends TestCase
         ];
         $view = TreeView::create($list);
         $this->assertInstanceOf(TreeNode::class, $view[0]);
-        $this->assertTrue(count($view[0]->childNodes()) === 2);
-        $this->assertTrue($view[0]->level() === 0);
+        $this->assertTrue(2 === \count($view[0]->childNodes()));
+        $this->assertTrue(0 === $view[0]->level());
         // Test Chil nodes levels
         $children = $view[0]->childNodes();
         foreach ($children as $value) {
             $this->assertInstanceOf(TreeNode::class, $value);
-            $this->assertTrue($value->level() === 1);
+            $this->assertTrue(1 === $value->level());
         }
     }
 
@@ -49,18 +59,18 @@ class TreeViewTest extends TestCase
             ['id' => 7, 'parent' => 3],
             ['id' => 8, 'parent' => 3],
             ['id' => 9, 'parent' => 3],
-            ['id' => 10, 'parent' =>  4],
-            ['id' => 11, 'parent' =>  6],
+            ['id' => 10, 'parent' => 4],
+            ['id' => 11, 'parent' => 6],
         ]);
         $view = $object->build();
         $this->assertInstanceOf(TreeNode::class, $view[0]);
-        $this->assertTrue(count($view[0]->childNodes()) === 2);
-        $this->assertTrue($view[0]->level() === 0);
+        $this->assertTrue(2 === \count($view[0]->childNodes()));
+        $this->assertTrue(0 === $view[0]->level());
         // Test Chil nodes levels
         $children = $view[0]->childNodes();
         foreach ($children as $value) {
             $this->assertInstanceOf(TreeNode::class, $value);
-            $this->assertTrue($value->level() === 1);
+            $this->assertTrue(1 === $value->level());
         }
     }
 }

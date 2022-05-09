@@ -304,7 +304,6 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, \Json
         return new static(array_combine($preserve_key ? $keys : array_keys($values), $values));
     }
 
-
     public function reduce(\Closure $callback, $initial = null)
     {
         return drewlabs_core_iter_reduce(

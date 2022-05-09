@@ -19,7 +19,6 @@ use Drewlabs\Support\Collections\Contracts\Arrayable;
 use Drewlabs\Support\Collections\Contracts\StreamInterface;
 use Drewlabs\Support\Collections\Traits\BaseStream;
 
-/** @package Drewlabs\Support\Collections */
 class ChunkedStream implements StreamInterface, Arrayable
 {
     use BaseStream;
@@ -31,24 +30,27 @@ class ChunkedStream implements StreamInterface, Arrayable
 
     public function map(callable $callback)
     {
-        $this->pipe[] = function (StreamInput $input) use ($callback) {
+        $this->pipe[] = static function (StreamInput $input) use ($callback) {
             $stream = $input->value->map($callback);
+
             return Operator::create()(StreamInput::wrap($stream));
         };
+
         return $this;
     }
 
     public function filter(callable $predicate)
     {
-        $this->pipe[] = function (StreamInput $input) use ($predicate) {
+        $this->pipe[] = static function (StreamInput $input) use ($predicate) {
             return Operator::create()(StreamInput::wrap($input->value->filter($predicate)));
         };
+
         return $this;
     }
 
-    public function reduce($identityOrFunc, callable $reducer = null)
+    public function reduce($identityOrFunc, ?callable $reducer = null)
     {
-        [$identity, $reducer] = func_num_args() === 1 ?
+        [$identity, $reducer] = 1 === \func_num_args() ?
             [0, $identityOrFunc] :
             [$identityOrFunc, $reducer];
         $result = $identity;
@@ -58,6 +60,7 @@ class ChunkedStream implements StreamInterface, Arrayable
             if ($current->accepts() && ($current->value)) {
                 $result = $current->value->reduce($result, $reducer);
             }
+
             return $result;
         };
         $composedFunc = Functional::compose(...$this->pipe);
@@ -78,8 +81,9 @@ class ChunkedStream implements StreamInterface, Arrayable
                 yield $value->toArray();
             }
         };
+
         return Arr::create(
-            $this->collect(function ($source) use (&$fn) {
+            $this->collect(static function ($source) use (&$fn) {
                 return $fn($source);
             })
         );

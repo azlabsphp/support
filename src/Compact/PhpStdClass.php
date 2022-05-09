@@ -14,10 +14,8 @@ declare(strict_types=1);
 namespace Drewlabs\Support\Compact;
 
 /**
- * @deprecated v2.2.x Prefer use of PHP {@see ArrayObject} class or the 
+ * @deprecated v2.2.x Prefer use of PHP {@see ArrayObject} class or the
  *             {@see Accessible} class from drewlabs/php-value package
- * 
- * @package Drewlabs\Support\Compact
  */
 class PhpStdClass extends \stdClass implements \ArrayAccess
 {

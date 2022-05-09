@@ -1,38 +1,49 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * This file is part of the Drewlabs package.
+ *
+ * (c) Sidoine Azandrew <azandrewdevelopper@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Drewlabs\Support\Tree\Traits;
 
 trait Node
 {
     /**
-     * 
      * @var int
      */
     private $__KEY__;
 
     /**
-     * 
      * @var int|string
      */
     private $__PARENT__;
 
     /**
-     * 
      * @var NodeInterface[]
      */
     private $__CHILDREN__ = [];
 
     /**
-     * 
      * @var int
      */
     private $__LEVEL__;
 
     /**
-     * 
      * @var mixed
      */
     private $__STATE__;
+
+    public function __toString()
+    {
+        return $this->__KEY__;
+    }
 
     public function key()
     {
@@ -43,17 +54,18 @@ trait Node
     {
         return $this->__PARENT__;
     }
-    
+
     public function isRoot()
     {
         return null === $this->__PARENT__;
     }
 
-    public function childNodes(array $values = null)
+    public function childNodes(?array $values = null)
     {
         if (null !== $values) {
             $this->__CHILDREN__ = $values;
         }
+
         return $this->__CHILDREN__;
     }
 
@@ -62,12 +74,8 @@ trait Node
         if (null !== $value) {
             $this->__LEVEL__ = $value;
         }
-        return $this->__LEVEL__;
-    }
 
-    public function __toString()
-    {
-        return $this->__KEY__;
+        return $this->__LEVEL__;
     }
 
     public function value($state = null)
@@ -75,6 +83,7 @@ trait Node
         if (null !== $state) {
             $this->__STATE__ = $state;
         }
+
         return $this->__STATE__;
     }
 

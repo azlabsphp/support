@@ -28,15 +28,15 @@ interface StreamInterface extends Collectable
      * Set a reducer that should be applied to a stream data. If the identity value
      * is omitted, meaning if the only a single parameter is passed, the parameter is
      * consider to be the reducer function.
-     * 
+     *
      * ```php
-     * 
+     *
      * $result = $stream->take(10)
      *              ->reduce(static function ($carry, $current) {
      *                      $carry += $current;
      *                      return $carry;
      *              });
-     * 
+     *
      * // Is same as
      * $result = $stream->take(10)
      *              ->reduce(0, static function ($carry, $current) {
@@ -45,14 +45,14 @@ interface StreamInterface extends Collectable
      *              });
      * ```
      *
-     * @param mixed|callable           $identityOrFunc
+     * @param mixed|callable       $identityOrFunc
      * @param \Closure<R,T,R>|null $reducer
      *
      * @throws Exception
      *
      * @return mixed
      */
-    public function reduce($identityOrFunc, callable $reducer = null);
+    public function reduce($identityOrFunc, ?callable $reducer = null);
 
     /**
      * Apply filtering to the stream using a predicate function.

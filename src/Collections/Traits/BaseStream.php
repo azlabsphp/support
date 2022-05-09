@@ -1,5 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * This file is part of the Drewlabs package.
+ *
+ * (c) Sidoine Azandrew <azandrewdevelopper@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Drewlabs\Support\Collections\Traits;
 
 use Drewlabs\Core\Helpers\Functional;
@@ -9,23 +20,23 @@ use Drewlabs\Support\Collections\StreamInput;
 trait BaseStream
 {
     /**
-     * Transformation pipe in which each stream value is passed through
-     * 
+     * Transformation pipe in which each stream value is passed through.
+     *
      * @var array<Closure<>>
      */
     private $pipe = [];
 
     /**
-     * The stream data source instance
-     * 
+     * The stream data source instance.
+     *
      * @var \Iterator<int,Stream>
      */
     private $source;
 
     /**
      * Control the state of the stream. If it value is true, the stream is unsafe
-     * meaning stream never ends
-     * 
+     * meaning stream never ends.
+     *
      * @var bool
      */
     private $infinite;
@@ -44,6 +55,7 @@ trait BaseStream
             }
         };
         $this->source = $fn($this->source);
+
         return $this;
     }
 
@@ -66,12 +78,13 @@ trait BaseStream
             }
         };
         $this->source = $fn($this->source);
+
         return $this;
     }
 
     public function skip(int $number)
     {
-        $fn =  static function ($source) use ($number) {
+        $fn = static function ($source) use ($number) {
             $index = 0;
             foreach ($source as $current) {
                 ++$index;
@@ -82,6 +95,7 @@ trait BaseStream
             }
         };
         $this->source = $fn($this->source);
+
         return $this;
     }
 
@@ -146,7 +160,7 @@ trait BaseStream
     {
         $this->_throwIfUnsafe();
         $compose = Functional::compose(...$this->pipe);
-        $fn =  static function (\Iterator $source) use (&$compose) {
+        $fn = static function (\Iterator $source) use (&$compose) {
             foreach ($source as $value) {
                 $result = $compose(StreamInput::wrap($value));
                 if (!$result->accepts()) {
@@ -155,14 +169,16 @@ trait BaseStream
                 yield $result->value;
             }
         };
+
         return \call_user_func($collector, $fn($this->source));
     }
 
     /**
-     * Checks if the provided parameter is a callable instance but not a string
-     * 
-     * @param mixed $value 
-     * @return bool 
+     * Checks if the provided parameter is a callable instance but not a string.
+     *
+     * @param mixed $value
+     *
+     * @return bool
      */
     private function isCallable($value)
     {
@@ -170,10 +186,11 @@ trait BaseStream
     }
 
     /**
-     * Throw error if the stream source is an unsafe stream source
-     * 
-     * @return void 
-     * @throws Exception 
+     * Throw error if the stream source is an unsafe stream source.
+     *
+     * @throws Exception
+     *
+     * @return void
      */
     private function _throwIfUnsafe()
     {

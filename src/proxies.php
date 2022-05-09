@@ -87,7 +87,7 @@ function DataTransfertObjectBridge($type = null)
     return new DataTransfertObjectBridge($type);
 }
 
-#region Data structures
+// region Data structures
 /**
  * Provides a proxy interface to {@link SimpleCollection} class constructor.
  *
@@ -99,10 +99,11 @@ function Collection($items = [])
 }
 
 /**
- * Creates a stream object from source elements
- * 
+ * Creates a stream object from source elements.
+ *
  * @param array|\iterable|\Iterator $source
- * @return Stream 
+ *
+ * @return Stream
  */
 function Stream($source = [])
 {
@@ -112,12 +113,11 @@ function Stream($source = [])
 /**
  * Creates a ranged stream using user provided parameters. It's similary
  * to PHP built-in {@see range()} function but does not allocate memory, instead
- * creates an iterator to the list of values
- * 
- * @param int $start 
- * @param int $end 
- * @param int $steps 
- * @return Stream 
+ * creates an iterator to the list of values.
+ *
+ * @param int $steps
+ *
+ * @return Stream
  */
 function RangeStream(int $start, int $end, $steps = 1)
 {
@@ -125,14 +125,16 @@ function RangeStream(int $start, int $end, $steps = 1)
 }
 
 /**
- * Creates a tree view from the provided list of object|values
- * 
- * @param array|\itreable|\Iterator $values 
- * @return \Drewlabs\Support\Tree\TreeNode[] 
+ * Creates a tree view from the provided list of object|values.
+ *
+ * @param array|\itreable|\Iterator $values
+ *
+ * @return \Drewlabs\Support\Tree\TreeNode[]
  */
 function TreeView($values = [])
 {
     $view = new TreeView($values);
+
     return $view->build();
 }
-#region Data structures
+// region Data structures

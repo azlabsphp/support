@@ -1,19 +1,28 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * This file is part of the Drewlabs package.
+ *
+ * (c) Sidoine Azandrew <azandrewdevelopper@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Drewlabs\Support\Tree;
 
 use Drewlabs\Support\Tree\Traits\Node as TraitsNode;
 
-/** @package Drewlabs\Support\Tree */
 class Node implements TreeNode
 {
     use TraitsNode;
 
     /**
-     * 
-     * @param mixed $key 
-     * @param mixed $data 
-     * @param int|string|TreeNode|null $parent 
+     * @param mixed                    $key
+     * @param mixed                    $data
+     * @param int|string|TreeNode|null $parent
      */
     public function __construct(
         $key,

@@ -1,42 +1,58 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * This file is part of the Drewlabs package.
+ *
+ * (c) Sidoine Azandrew <azandrewdevelopper@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Drewlabs\Support\Collections;
 
-use IteratorAggregate;
-use JsonSerializable;
-
-/** @package Drewlabs\Support\Collections */
-class LinkedList implements IteratorAggregate, JsonSerializable
+class LinkedList implements \IteratorAggregate, \JsonSerializable
 {
     /**
-     * 
      * @var Node
      */
     private $root;
 
     /**
-     * 
      * @var Node
      */
     private $tail;
 
     /**
-     * Size of the collection
-     * 
+     * Size of the collection.
+     *
      * @var int
      */
     private $size = 0;
 
     /**
-     * 
-     * @param \Traversable|array $source 
-     * @return self 
+     * @param \Traversable|array $source
+     *
+     * @return self
      */
     public function __construct($source = [])
     {
         foreach ($source as $value) {
             $this->push($value);
         }
+    }
+
+    public function __toString()
+    {
+        $out = '[ ';
+        foreach ($this->getIterator() as $value) {
+            $out .= sprintf('%d ', $value);
+        }
+        $out .= "]\n";
+
+        return $out;
     }
 
     public function push($value)
@@ -69,6 +85,7 @@ class LinkedList implements IteratorAggregate, JsonSerializable
         $this->tail = &$this->tail->previous;
         $this->tail->next = null;
         --$this->size;
+
         return $value;
     }
 
@@ -102,20 +119,21 @@ class LinkedList implements IteratorAggregate, JsonSerializable
         return Stream::of($this->getIterator());
     }
 
-    #region Miscellanous added as utility but do not use because O(n)=n
+    // region Miscellanous added as utility but do not use because O(n)=n
     /**
      * Performs a sequential search on the list. It will run at O(n)=n if the item
      * is not in the list or near the end of the list. Prefer use of other data structure
      * from PHP 8 \Ds namespace that are optimized for such search.
-     * 
-     * @param \Closure|mixed $value 
-     * @return int 
+     *
+     * @param \Closure|mixed $value
+     *
+     * @return int
      */
     public function find($value)
     {
-        $predicate = is_callable($value) && !is_string($value) ?
+        $predicate = \is_callable($value) && !\is_string($value) ?
             $value :
-            function ($current) use ($value) {
+            static function ($current) use ($value) {
                 return $value === $current;
             };
         $current = $this->root;
@@ -127,6 +145,7 @@ class LinkedList implements IteratorAggregate, JsonSerializable
             $current = $current->next;
             ++$index;
         }
+
         return -1;
     }
 
@@ -141,9 +160,10 @@ class LinkedList implements IteratorAggregate, JsonSerializable
             $current = $current->next;
             ++$i;
         }
+
         return null;
     }
-    #endregion
+    // endregion
 
     #[\ReturnTypeWillChange]
     public function getIterator()
@@ -153,16 +173,6 @@ class LinkedList implements IteratorAggregate, JsonSerializable
             yield $current->value;
             $current = $current->next;
         }
-    }
-
-    public function __toString()
-    {
-        $out = "[ ";
-        foreach ($this->getIterator() as $value) {
-            $out .= sprintf("%d ", $value);
-        }
-        $out .= "]\n";
-        return $out;
     }
 
     public function toArray(): array

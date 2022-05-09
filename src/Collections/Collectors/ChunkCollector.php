@@ -27,10 +27,11 @@ class ChunkCollector implements CollectorInterface
     private $size;
 
     /**
-     * Create a ChunkedStream collector
-     * 
-     * @param int $size 
-     * @return self 
+     * Create a ChunkedStream collector.
+     *
+     * @param int $size
+     *
+     * @return self
      */
     public function __construct(?int $size = 512)
     {
@@ -40,7 +41,7 @@ class ChunkCollector implements CollectorInterface
     public function __invoke(\Traversable $source)
     {
         if ($this->size > static::SIZE_LIMIT) {
-            throw new \LogicException('For performance reason, chunk size has been limit to ' . $this->size);
+            throw new \LogicException('For performance reason, chunk size has been limit to '.$this->size);
         }
 
         return new Chunk($this->createChunk($source));
@@ -49,7 +50,7 @@ class ChunkCollector implements CollectorInterface
     private function createChunk(\Iterator $source)
     {
         $index = 0;
-        $list = new LinkedList;
+        $list = new LinkedList();
         foreach ($source as $current) {
             if ($index === $this->size) {
                 yield $list->stream();

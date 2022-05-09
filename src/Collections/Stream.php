@@ -21,11 +21,7 @@ use Drewlabs\Support\Collections\Contracts\Arrayable;
 use Drewlabs\Support\Collections\Contracts\StreamInterface;
 use Drewlabs\Support\Collections\Traits\BaseStream;
 
-class Stream implements
-    \IteratorAggregate,
-    StreamInterface,
-    ArrayableInterface,
-    Arrayable
+class Stream implements \IteratorAggregate, StreamInterface, ArrayableInterface, Arrayable
 {
     use BaseStream;
 
@@ -72,10 +68,10 @@ class Stream implements
         return new self(Iter::range($start, $end, $steps));
     }
 
-    public function reduce($identityOrFunc, callable $callback = null)
+    public function reduce($identityOrFunc, ?callable $callback = null)
     {
         $this->_throwIfUnsafe();
-        [$identity, $callback] = func_num_args() === 1 ?
+        [$identity, $callback] = 1 === \func_num_args() ?
             [0, $identityOrFunc] :
             [$identityOrFunc, $callback];
         $result = $identity;
@@ -83,6 +79,7 @@ class Stream implements
             if ($current->accepts()) {
                 $result = $callback($result, $current->value);
             }
+
             return $result;
         };
         $composedFunc = Functional::compose(...$this->pipe);
@@ -95,7 +92,7 @@ class Stream implements
 
     public function filter(callable $callback)
     {
-        $this->pipe[] = function ($source) use ($callback) {
+        $this->pipe[] = static function ($source) use ($callback) {
             return Operator::create()(
                 StreamInput::wrap(
                     $source->value,
@@ -103,6 +100,7 @@ class Stream implements
                 )
             );
         };
+
         return $this;
     }
 
