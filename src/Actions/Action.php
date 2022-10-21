@@ -42,17 +42,18 @@ class Action implements ActionInterface, \JsonSerializable, ArrayableInterface
         $this->type = $attributes['type'] ?? 'default';
         // Based on changes from v2.4.x, always returns payload as array for
         // API compatibility
-        $this->payload = new ActionPayload($attributes['payload'] ?? null);
+        $payload = $attributes['payload'] ?? [];
+        $this->payload = new ActionPayload(...$payload);
     }
 
     /**
      * Creates an {@see Action} instance.
-     *
-     * @param mixed $payload
-     *
-     * @return static
+     * 
+     * @param string $type 
+     * @param mixed ...$payload 
+     * @return static 
      */
-    public static function create(string $type, $payload)
+    public static function create(string $type, ...$payload)
     {
         return new static(['type' => $type, 'payload' => $payload]);
     }
