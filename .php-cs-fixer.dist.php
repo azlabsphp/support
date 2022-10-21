@@ -14,6 +14,7 @@ HEADER;
 $rules = [
     '@PHP56Migration:risky' => true,
     "@PHP81Migration" => true,
+    "@PHP74Migration" => true,
     '@PHP70Migration' => true,
     '@PHP70Migration:risky' => true,
     '@PHP71Migration' => true,
