@@ -13,12 +13,9 @@ declare(strict_types=1);
 
 namespace Drewlabs\Support\Actions;
 
-use BadMethodCallException;
 use Drewlabs\Contracts\Support\Actions\ActionResult as ActionResultInterface;
 use Drewlabs\Contracts\Support\ArrayableInterface;
 use Drewlabs\Support\Traits\MethodProxy;
-use Error;
-use LogicException;
 
 /**
  * Provide an implementation to the {@link ActionResult} interface
@@ -47,13 +44,15 @@ class ActionResult implements ActionResultInterface, \JsonSerializable, Arrayabl
     }
 
     /**
-     * PHP magic method indirecting calls on the current object to the value it wraps
-     * 
-     * @param mixed $name 
-     * @param mixed $arguments 
-     * @return mixed 
-     * @throws Error 
-     * @throws BadMethodCallException 
+     * PHP magic method indirecting calls on the current object to the value it wraps.
+     *
+     * @param mixed $name
+     * @param mixed $arguments
+     *
+     * @throws \Error
+     * @throws \BadMethodCallException
+     *
+     * @return mixed
      */
     public function __call($name, $arguments)
     {
@@ -63,22 +62,24 @@ class ActionResult implements ActionResultInterface, \JsonSerializable, Arrayabl
         if ($value = $this->value()) {
             return $this->proxy($value, $name, $arguments);
         }
-        throw new \BadMethodCallException("Method $name does not exists on " . __CLASS__);
+        throw new \BadMethodCallException("Method $name does not exists on ".__CLASS__);
     }
 
     /**
-     * PHP magic method redirecting property getter call to wrapped value
-     * 
-     * @param mixed $name 
-     * @return mixed 
-     * @throws LogicException 
+     * PHP magic method redirecting property getter call to wrapped value.
+     *
+     * @param mixed $name
+     *
+     * @throws \LogicException
+     *
+     * @return mixed
      */
     public function __get($name)
     {
         if (null !== $this->value && \is_object($this->value)) {
             return $this->value->{$name};
         }
-        throw new \LogicException("$name does not exists on " . \is_object($this->value) && null !== $this->value ? \get_class($this->value) : \gettype($this->value));
+        throw new \LogicException("$name does not exists on ".\is_object($this->value) && null !== $this->value ? \get_class($this->value) : \gettype($this->value));
     }
 
     public function value()

@@ -81,8 +81,6 @@ trait ValueObject
      * @deprecated v2.2.x Implementation in drewlabs/php-value is
      *             more up to date and feature richer than this implementation
      *
-     * @param $name
-     *
      * @return mixed
      */
     public function __get($name)

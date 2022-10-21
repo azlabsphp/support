@@ -19,39 +19,38 @@ use Drewlabs\Contracts\Support\ArrayableInterface;
 class Action implements ActionInterface, \JsonSerializable, ArrayableInterface
 {
     /**
-     * Action type property
-     * 
+     * Action type property.
+     *
      * @var string
      */
     private $type;
 
     /**
-     * Action payload property
-     * 
+     * Action payload property.
+     *
      * @var mixed
      */
     private $payload;
 
     /**
-     * Creates an {@see Action} class instance
-     * 
-     * @param array $attributes 
-     * @return self 
+     * Creates an {@see Action} class instance.
+     *
+     * @return self
      */
     public function __construct(array $attributes = [])
     {
         $this->type = $attributes['type'] ?? 'default';
-        // Based on changes from v2.4.x, always returns payload as array for 
+        // Based on changes from v2.4.x, always returns payload as array for
         // API compatibility
         $this->payload = new ActionPayload($attributes['payload'] ?? null);
     }
 
     /**
-     * Creates an {@see Action} instance
-     * 
-     * @param string $type 
-     * @param mixed $payload 
-     * @return static 
+     * Creates an {@see Action} instance.
+     *
+     * @param mixed $payload
+     *
+     * @return static
      */
     public static function create(string $type, $payload)
     {
@@ -66,10 +65,9 @@ class Action implements ActionInterface, \JsonSerializable, ArrayableInterface
     /**
      * **Note**
      * From version 2.4.x, `$action->payload()` calls returns an instance of `ActionPayload`
-     * instead of `array` in previous version
-     * 
+     * instead of `array` in previous version.
+     *
      * {@inheritDoc}
-     * 
      */
     public function payload()
     {

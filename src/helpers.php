@@ -35,7 +35,6 @@ if (!function_exists('drewlabs_core_create_get_callback')) {
 }
 
 if (!function_exists('drewlabs_core_create_evaluation_callback')) {
-
     /**
      * Create an operator checker callback.
      *

@@ -57,7 +57,7 @@ class ChunkedStream implements StreamInterface, Arrayable
         // For chunk stream reducer function we strive to reduce
         // value of each chunk recursively
         $this->pipe[] = static function (StreamInput $current) use ($reducer, &$result) {
-            if ($current->accepts() && ($current->value)) {
+            if ($current->accepts() && $current->value) {
                 $result = $current->value->reduce($result, $reducer);
             }
 

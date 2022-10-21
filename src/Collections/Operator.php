@@ -27,7 +27,7 @@ class Operator
 
     public function __invoke($data)
     {
-        if ($accepts = (bool) ($data->accepts())) {
+        if ($accepts = (bool) $data->accepts()) {
             return null === $this->callback ?
                 $data :
                 StreamInput::wrap(

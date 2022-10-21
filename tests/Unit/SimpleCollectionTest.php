@@ -15,6 +15,7 @@ namespace Drewlabs\Support\Tests\Unit;
 
 use Drewlabs\Support\Collections\SimpleCollection;
 use Drewlabs\Support\Exceptions\NotFoundException;
+
 use function Drewlabs\Support\Proxy\Collection;
 
 use Drewlabs\Support\Tests\TestCase;
@@ -891,7 +892,7 @@ class SimpleCollectionTest extends TestCase
                 'year' => 1870,
             ],
         ])->average(static function ($value) {
-            return (int) ($value['year']);
+            return (int) $value['year'];
         });
         $this->assertSame((1970 + 1960 + 1870) / 3, $result);
     }

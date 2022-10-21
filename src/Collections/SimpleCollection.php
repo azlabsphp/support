@@ -186,7 +186,7 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, \Json
      */
     public function contains(...$args): bool
     {
-        if (1 === \count(($args_ = \func_get_args()))) {
+        if (1 === \count($args_ = \func_get_args())) {
             if (drewlabs_core_is_closure($args_[0])) {
                 $default = new \stdClass();
 
@@ -618,7 +618,7 @@ final class SimpleCollection implements CollectionInterface, \ArrayAccess, \Json
         $items = $this->all();
         $count = $this->count();
         $groups = new static();
-        $gsize = (int) (floor($count / $total));
+        $gsize = (int) floor($count / $total);
         $remain = $count % $total;
         $start = 0;
         // #endregion Initialize variables

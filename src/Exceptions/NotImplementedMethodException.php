@@ -16,10 +16,11 @@ namespace Drewlabs\Support\Exceptions;
 class NotImplementedMethodException extends \Exception
 {
     /**
-     * Creates a {@see NotImplementedMethodException} instance
-     * 
-     * @param mixed $method 
-     * @return static 
+     * Creates a {@see NotImplementedMethodException} instance.
+     *
+     * @param string $method
+     *
+     * @return static
      */
     public function __construct($method)
     {

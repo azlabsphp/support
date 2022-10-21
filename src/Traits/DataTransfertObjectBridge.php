@@ -67,7 +67,7 @@ trait DataTransfertObjectBridge
     public function toObject($model, $all = false)
     {
         if (!\is_array($model)) {
-            $hasToArrayMethod = \is_object($model) && !($model instanceof ArrayableInterface) && !(method_exists($model, 'toArray'));
+            $hasToArrayMethod = \is_object($model) && !($model instanceof ArrayableInterface) && !method_exists($model, 'toArray');
             if ($hasToArrayMethod) {
                 return $this->createTemplateClass()->fromStdClass($model);
             }

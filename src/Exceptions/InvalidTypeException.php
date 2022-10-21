@@ -16,12 +16,9 @@ namespace Drewlabs\Support\Exceptions;
 class InvalidTypeException extends \Exception
 {
     /**
-     * Creates an {@see InvalidTypeException} instance
-     * 
-     * @param string $property 
-     * @param string $expected 
-     * @param string $got 
-     * @return void 
+     * Creates an {@see InvalidTypeException} instance.
+     *
+     * @return self
      */
     public function __construct(string $property, string $expected, string $got)
     {

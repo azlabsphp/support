@@ -18,8 +18,8 @@ use Drewlabs\Contracts\Support\Actions\ActionPayload as PayloadInterface;
 class ActionPayload implements PayloadInterface
 {
     /**
-     * Payload values property
-     * 
+     * Payload values property.
+     *
      * @var array
      */
     private $values;
@@ -27,10 +27,11 @@ class ActionPayload implements PayloadInterface
     /**
      * Creates an {@see ActionPayload} instance. Constructor parameter is variadic in order to always create
      * values properties as array no matter the parameter. It makes the payload to be be easily decomposable
-     * when passed to a function
-     * 
-     * @param mixed $values 
-     * @return static 
+     * when passed to a function.
+     *
+     * @param mixed $values
+     *
+     * @return static
      */
     public function __construct(...$values)
     {

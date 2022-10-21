@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Drewlabs\Support\Tests\Unit;
 
 use function Drewlabs\Support\Proxy\ActionResult;
+
 use Drewlabs\Support\Tests\Stubs\ActionResultValueStub;
 use Drewlabs\Support\Tests\Stubs\ConsoleLogger;
 
