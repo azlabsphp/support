@@ -13,51 +13,72 @@ declare(strict_types=1);
 
 namespace Drewlabs\Support\Actions;
 
-use Drewlabs\Contracts\Support\Actions\Action as ActionsAction;
+use Drewlabs\Contracts\Support\Actions\Action as ActionInterface;
 use Drewlabs\Contracts\Support\ArrayableInterface;
 
-class Action implements ActionsAction, \JsonSerializable, ArrayableInterface
+class Action implements ActionInterface, \JsonSerializable, ArrayableInterface
 {
     /**
+     * Action type property
+     * 
      * @var string
      */
-    private $type_;
+    private $type;
 
     /**
+     * Action payload property
+     * 
      * @var mixed
      */
-    private $payload_;
+    private $payload;
 
+    /**
+     * Creates an {@see Action} class instance
+     * 
+     * @param array $attributes 
+     * @return self 
+     */
     public function __construct(array $attributes = [])
     {
-        $this->type_ = $attributes['type'] ?? null;
-        $this->payload_ = $attributes['payload'] ?? null;
+        $this->type = $attributes['type'] ?? 'default';
+        // Based on changes from v2.4.x, always returns payload as array for 
+        // API compatibility
+        $this->payload = new ActionPayload($attributes['payload'] ?? null);
     }
 
-    public function create(string $type, $payload)
+    /**
+     * Creates an {@see Action} instance
+     * 
+     * @param string $type 
+     * @param mixed $payload 
+     * @return static 
+     */
+    public static function create(string $type, $payload)
     {
-        return new self([
-            'type' => $type,
-            'payload' => $payload,
-        ]);
+        return new static(['type' => $type, 'payload' => $payload]);
     }
 
     public function type()
     {
-        return $this->type_;
+        return $this->type;
     }
 
+    /**
+     * **Note**
+     * From version 2.4.x, `$action->payload()` calls returns an instance of `ActionPayload`
+     * instead of `array` in previous version
+     * 
+     * {@inheritDoc}
+     * 
+     */
     public function payload()
     {
-        return $this->payload_;
+        return $this->payload;
     }
 
     public function toArray()
     {
-        return [
-            'type' => $this->type_,
-            'payload' => $this->payload_,
-        ];
+        return ['type' => $this->type(), 'payload' => $this->payload()->toArray()];
     }
 
     #[\ReturnTypeWillChange]

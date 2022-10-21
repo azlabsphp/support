@@ -28,7 +28,6 @@ class JsonEncodingException extends \InvalidArgumentException
     public static function forDtoObject($object, $message)
     {
         $model = $object->toModel();
-
         return new static('Error encoding resource ['.\get_class($object).'] with model ['.\get_class($model).'] with ID ['.$model->getKey().'] to JSON: '.$message);
     }
 }

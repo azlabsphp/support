@@ -15,6 +15,12 @@ namespace Drewlabs\Support\Exceptions;
 
 class NotImplementedMethodException extends \Exception
 {
+    /**
+     * Creates a {@see NotImplementedMethodException} instance
+     * 
+     * @param mixed $method 
+     * @return static 
+     */
     public function __construct($method)
     {
         $msg = sprintf('Not Implementation provided for %s', $method);

@@ -18,7 +18,6 @@ class UnConfiguredClassInstanceException extends \Exception
     public function __construct(string $clazz)
     {
         $message = sprintf('%s instance not properly configured', $clazz);
-
         parent::__construct($message, 500);
     }
 }

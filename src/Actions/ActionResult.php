@@ -13,23 +13,26 @@ declare(strict_types=1);
 
 namespace Drewlabs\Support\Actions;
 
-use Drewlabs\Contracts\Support\Actions\ActionResult as ActionsActionResult;
+use BadMethodCallException;
+use Drewlabs\Contracts\Support\Actions\ActionResult as ActionResultInterface;
 use Drewlabs\Contracts\Support\ArrayableInterface;
 use Drewlabs\Support\Traits\MethodProxy;
+use Error;
+use LogicException;
 
 /**
  * Provide an implementation to the {@link ActionResult} interface
  * that will be easilly serializable to the value it wrapp.
  *
  * */
-class ActionResult implements ActionsActionResult, \JsonSerializable, ArrayableInterface
+class ActionResult implements ActionResultInterface, \JsonSerializable, ArrayableInterface
 {
     use MethodProxy;
 
     /**
      * @var mixed
      */
-    private $value_;
+    private $value;
 
     /**
      * Class instances initializer. It takes as parameter the value to wrap.
@@ -40,43 +43,57 @@ class ActionResult implements ActionsActionResult, \JsonSerializable, ArrayableI
      */
     public function __construct($data)
     {
-        $this->value_ = $data;
+        $this->value = $data;
     }
 
+    /**
+     * PHP magic method indirecting calls on the current object to the value it wraps
+     * 
+     * @param mixed $name 
+     * @param mixed $arguments 
+     * @return mixed 
+     * @throws Error 
+     * @throws BadMethodCallException 
+     */
     public function __call($name, $arguments)
     {
-        if ($this->value_) {
-            return $this->proxy($this->value_, $name, $arguments);
+        if ($this->value) {
+            return $this->proxy($this->value, $name, $arguments);
         }
         if ($value = $this->value()) {
             return $this->proxy($value, $name, $arguments);
         }
-        throw new \BadMethodCallException("Method $name does not exists on ".__CLASS__);
+        throw new \BadMethodCallException("Method $name does not exists on " . __CLASS__);
     }
 
+    /**
+     * PHP magic method redirecting property getter call to wrapped value
+     * 
+     * @param mixed $name 
+     * @return mixed 
+     * @throws LogicException 
+     */
     public function __get($name)
     {
-        if (null !== $this->value_ && \is_object($this->value_)) {
-            return $this->value_->{$name};
+        if (null !== $this->value && \is_object($this->value)) {
+            return $this->value->{$name};
         }
-        throw new \LogicException("$name does not exists on ".\is_object($this->value_) && null !== $this->value_ ? \get_class($this->value_) : \gettype($this->value_));
+        throw new \LogicException("$name does not exists on " . \is_object($this->value) && null !== $this->value ? \get_class($this->value) : \gettype($this->value));
     }
 
     public function value()
     {
-        return $this->value_;
+        return $this->value;
     }
 
     public function toArray()
     {
-        return [
-            'value' => $this->value_,
-        ];
+        return ['value' => $this->value];
     }
 
     #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
-        return $this->value_;
+        return $this->value;
     }
 }

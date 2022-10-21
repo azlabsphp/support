@@ -25,14 +25,37 @@ use Drewlabs\Support\XML\XMLElement;
 
 /**
  * Provides a proxy interface to {@link Action} class constructor.
+ * 
+ * ```php
+ * use function Drewlabs\Support\Proxy\Action;
+ * 
+ * // ...
+ * // Create an action
+ * $action = Action(['type' => 'SELECT', 'payload' => []]);
+ * ```
+ * 
+ * **Note**
+ * From version 2.4.x the API provides an overloaded interface, allowing developper to
+ * pass payload as a variadic parameter and a string action type
+ * 
+ * ```php
+ * use function Drewlabs\Support\Proxy\Action;
+ * 
+ * $action = Action('SELECT', $id); // Here $id represent will be payload parameter
+ * ```
  *
- * @param array|object $attributes
+ * @param array|object|string $type
+ * @param mixed $payload
  *
  * @return Action
  */
-function Action($attributes = [])
+function Action($type = [], ...$payload)
 {
-    return new Action($attributes);
+    $payload = $payload ?? [];
+    if (is_string($type)) {
+        return Action::create($type, ...$payload);
+    }
+    return new Action($type);
 }
 
 /**

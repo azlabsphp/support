@@ -40,3 +40,7 @@
 ## [2.3.3] 2022-05-07
 
 - Removed inheritance of ValueObject from ActionResult and Action classes
+
+## [2.4.0]
+
+- From version 2.4.x, `$action->payload()` calls returns an instance of `ActionPayload` instead of `array` in previous version

@@ -15,6 +15,8 @@ namespace Drewlabs\Support;
 
 use Drewlabs\Support\Exceptions\UnsupportedConfigurationFileException;
 use Drewlabs\Support\Types\ConfigureMethod;
+use RuntimeException;
+use ReflectionException;
 
 class PackagesConfigurationManifest
 {
@@ -35,6 +37,15 @@ class PackagesConfigurationManifest
      */
     private static $REQUIRE_JSON_FILES = [];
 
+    /**
+     * Configure provided packages configuration classes
+     * 
+     * @param array $manifest 
+     * @return void 
+     * @throws RuntimeException 
+     * @throws UnsupportedConfigurationFileException 
+     * @throws ReflectionException 
+     */
     public static function load(array $manifest)
     {
         foreach ($manifest as $key => $value) {
