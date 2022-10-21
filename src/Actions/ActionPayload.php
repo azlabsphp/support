@@ -15,6 +15,7 @@ namespace Drewlabs\Support\Actions;
 
 use Drewlabs\Contracts\Support\Actions\ActionPayload as PayloadInterface;
 
+/** @package Drewlabs\Support\Actions */
 class ActionPayload implements PayloadInterface
 {
     /**
@@ -36,6 +37,11 @@ class ActionPayload implements PayloadInterface
     public function __construct(...$values)
     {
         $this->values = $values;
+    }
+
+    public function value()
+    {
+        return $this->values;
     }
 
     public function all()

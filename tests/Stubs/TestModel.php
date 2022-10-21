@@ -22,6 +22,10 @@ class TestModel implements Model
         return 'id';
     }
 
+    public function setKey($value)
+    {
+    }
+
     public function getKey()
     {
         return 1;
