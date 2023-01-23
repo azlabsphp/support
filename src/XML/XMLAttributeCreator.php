@@ -33,7 +33,7 @@ class XMLAttributeCreator implements XMLAttributeCreatorInterface
 
     public function __destruct()
     {
-        // $this->xml->__destruct();
+        $this->xml = null;
     }
 
     public function create($attribute)
