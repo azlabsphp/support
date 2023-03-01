@@ -39,6 +39,14 @@ class ActionPayload implements PayloadInterface
         $this->values = $values;
     }
 
+    /**
+     * Based on changes from version 2.4.x, actions wrap it payload values as array
+     * even if the value is passed as a single parameter.
+     * 
+     * {@inheritDoc}
+     * 
+     * @return array 
+     */
     public function value()
     {
         return $this->values;
@@ -51,6 +59,6 @@ class ActionPayload implements PayloadInterface
 
     public function toArray()
     {
-        return $this->values;
+        return $this->all();
     }
 }

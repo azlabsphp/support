@@ -42,7 +42,7 @@ class Action implements ActionInterface, \JsonSerializable, ArrayableInterface
         $this->type = $attributes['type'] ?? 'default';
         // Based on changes from v2.4.x, always returns payload as array for
         // API compatibility
-        $payload = $attributes['payload'] ?? [];
+        $payload = is_array($result = ($attributes['payload'] ?? [])) ? $result : [$result];
         $this->payload = new ActionPayload(...$payload);
     }
 
