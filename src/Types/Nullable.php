@@ -18,27 +18,33 @@ class Nullable
     /**
      * @var mixed|null
      */
-    private $value_;
+    private $value;
 
     /**
      * @var mixed|null
      */
-    private $default_;
+    private $default;
 
+    /**
+     * Creates class instance
+     * 
+     * @param mixed $value 
+     * @param mixed $default 
+     */
     public function __construct($value, $default = null)
     {
-        $this->value_ = $value;
-        $this->default_ = $default;
+        $this->value = $value;
+        $this->default = $default;
     }
 
     public function value()
     {
-        return $this->value_ ?? $this->resolveClosure();
+        return $this->value ?? $this->resolveClosure();
     }
 
     public function hasValue()
     {
-        $tmp = $this->value_ ?? $this->resolveClosure();
+        $tmp = $this->value ?? $this->resolveClosure();
 
         return null !== $tmp;
     }
@@ -50,8 +56,8 @@ class Nullable
 
     private function resolveClosure()
     {
-        return \is_callable($this->default_) && !\is_string($this->default_) ?
-            \call_user_func($this->default_) :
-            $this->default_;
+        return \is_callable($this->default) && !\is_string($this->default) ?
+            \call_user_func($this->default) :
+            $this->default;
     }
 }

@@ -15,9 +15,13 @@ namespace Drewlabs\Support\Exceptions;
 
 class UnConfiguredClassInstanceException extends \Exception
 {
-    public function __construct(string $clazz)
+    /**
+     * Creates new class instance
+     * 
+     * @param string $blueprint 
+     */
+    public function __construct(string $blueprint)
     {
-        $message = sprintf('%s instance not properly configured', $clazz);
-        parent::__construct($message, 500);
+        parent::__construct(sprintf('%s instance not properly configured', $blueprint), 500);
     }
 }

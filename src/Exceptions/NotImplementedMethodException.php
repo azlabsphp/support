@@ -22,9 +22,8 @@ class NotImplementedMethodException extends \Exception
      *
      * @return static
      */
-    public function __construct($method)
+    public function __construct(string $method)
     {
-        $msg = sprintf('Not Implementation provided for %s', $method);
-        parent::__construct($msg, 500);
+        parent::__construct(sprintf('No implementation provided for %s', $method), 500);
     }
 }

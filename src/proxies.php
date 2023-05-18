@@ -77,13 +77,8 @@ function ActionResult($value = null)
  *
  * @return XMLElement
  */
-function XMLElement(
-    string $name,
-    $value = '',
-    string $ns = '',
-    $attributes = [],
-    ?string $xmlns = null
-) {
+function XMLElement(string $name, $value = '', string $ns = '', $attributes = [], ?string $xmlns = null)
+{
     return new XMLElement($name, $value, $ns, $attributes, $xmlns);
 }
 
@@ -100,16 +95,6 @@ function XMLAttribute(string $name, $value = '')
 }
 
 // Value object proxies
-
-/**
- * Provides a proxy interface to {@link DataTransfertObjectBridge} class constructor.
- *
- * @return QueryResultInterface
- */
-function DataTransfertObjectBridge($type = null)
-{
-    return new DataTransfertObjectBridge($type);
-}
 
 // region Data structures
 /**

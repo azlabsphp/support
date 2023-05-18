@@ -15,6 +15,11 @@ namespace Drewlabs\Support\Exceptions;
 
 class NullPointerException extends \Exception
 {
+    /**
+     * Creates class instance
+     * 
+     * @param string $property 
+     */
     public function __construct(string $property)
     {
         parent::__construct("ERROR : $property value is not initialized");

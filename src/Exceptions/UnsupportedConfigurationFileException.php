@@ -15,10 +15,13 @@ namespace Drewlabs\Support\Exceptions;
 
 class UnsupportedConfigurationFileException extends \Exception
 {
-    public function __construct(array $supportedExtensions = [])
+    /**
+     * Creates class instance
+     * 
+     * @param array $extensions 
+     */
+    public function __construct(array $extensions = [])
     {
-        $message = sprintf('Supported configuration files are %s', drewlabs_core_strings_from_array($supportedExtensions));
-
-        parent::__construct($message, 500);
+        parent::__construct(sprintf('Supported configuration files are %s', implode(', ', $extensions)), 500);
     }
 }
