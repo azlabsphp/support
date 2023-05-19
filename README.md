@@ -1,3 +1,3 @@
-# drewlabs-php-support
+# Support
 
-Utility library for creating common objects like immutable object, collection, Action creator etc...
+The supports package provides utility library for common task in PHP projects.
