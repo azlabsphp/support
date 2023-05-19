@@ -11,8 +11,7 @@
             "Drewlabs\\Support\\": "src/"
         },
         "files": [
-            "./src/proxies.php",
-            "./src/helpers.php"
+            "./src/proxies.php"
         ],
         "optimize-autoloader": true
     },
@@ -33,7 +32,8 @@
         "drewlabs/core-helpers": "^0.2",
         "drewlabs/contracts": "^0.2",
         "symfony/polyfill-php81": "^1.24",
-        "psr/container": "^1.0|^2.0"
+        "psr/container": "^1.0|^2.0",
+        "drewlabs/collections": "^0.2.0"
     },
     "repositories": []
 }

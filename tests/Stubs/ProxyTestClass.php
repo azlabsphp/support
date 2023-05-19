@@ -13,13 +13,12 @@ declare(strict_types=1);
 
 namespace Drewlabs\Support\Tests\Stubs;
 
-use Drewlabs\Contracts\Support\Proxy\ObjectMethodProxyInterface;
 use Drewlabs\Support\Traits\ObjectMethodsProxy;
 
 /**
  * @method void log()
  */
-class ProxyTestClass implements ObjectMethodProxyInterface
+class ProxyTestClass
 {
     use ObjectMethodsProxy;
 }

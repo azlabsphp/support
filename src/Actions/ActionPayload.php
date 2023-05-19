@@ -15,7 +15,6 @@ namespace Drewlabs\Support\Actions;
 
 use Drewlabs\Contracts\Support\Actions\ActionPayload as PayloadInterface;
 
-/** @package Drewlabs\Support\Actions */
 class ActionPayload implements PayloadInterface
 {
     /**
@@ -42,10 +41,10 @@ class ActionPayload implements PayloadInterface
     /**
      * Based on changes from version 2.4.x, actions wrap it payload values as array
      * even if the value is passed as a single parameter.
-     * 
+     *
      * {@inheritDoc}
-     * 
-     * @return array 
+     *
+     * @return array
      */
     public function value()
     {

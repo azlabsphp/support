@@ -13,8 +13,8 @@ declare(strict_types=1);
 
 namespace Drewlabs\Support;
 
+use Drewlabs\Core\Helpers\Str;
 use Drewlabs\Support\Exceptions\UnsupportedConfigurationFileException;
-use Drewlabs\Support\Types\ConfigureMethod;
 
 class PackagesConfigurationManifest
 {
@@ -52,10 +52,10 @@ class PackagesConfigurationManifest
             // $value is either string or or array
             if (\is_array($value)) {
                 $total_count = \count($value);
-                $method = $total_count > 1 ? $value[0] : ConfigureMethod::VALUE;
+                $method = $total_count > 1 ? $value[0] : 'configure';
                 $params = $total_count > 1 ? $value[1] : $value[0];
             } else {
-                $method = ConfigureMethod::VALUE;
+                $method = 'configure';
                 $params = $value;
             }
             // If the params is array transform the first item of the array
@@ -70,14 +70,13 @@ class PackagesConfigurationManifest
 
     private static function readConfiguration(string $path)
     {
-        $basename = basename($path);
-        if (drewlabs_core_strings_ends_with($basename, '.json')) {
+        if (Str::endsWith($basename = basename($path), '.json')) {
             return static::readJSONConfiguration($path);
         }
-        if (drewlabs_core_strings_ends_with($basename, '.php')) {
+        if (Str::endsWith($basename, '.php')) {
             return static::readPHPConfiguration($path);
         }
-        if (drewlabs_core_strings_ends_with($basename, '.yml')) {
+        if (Str::endsWith($basename, '.yml')) {
             return static::readYAMLConfiguration($path);
         }
         // Throw new Exception
@@ -91,7 +90,7 @@ class PackagesConfigurationManifest
      */
     private static function readPHPConfiguration(string $path)
     {
-        $key = drewlabs_core_strings_before('.', basename($path));
+        $key = Str::before('.', basename($path));
         if (\array_key_exists($key, static::$REQUIRE_FILES)) {
             return static::$REQUIRE_FILES[$key];
         }
@@ -134,7 +133,7 @@ class PackagesConfigurationManifest
     {
         // Because reading from file is a blocking task, reading from
         // the json configuration file will only being perform once
-        $key = drewlabs_core_strings_before('.', basename($path));
+        $key = Str::before('.', basename($path));
         if (\array_key_exists($key, static::$REQUIRE_JSON_FILES)) {
             return static::$REQUIRE_JSON_FILES[$key];
         }
@@ -148,14 +147,14 @@ class PackagesConfigurationManifest
         return [];
     }
 
-    private static function callConfigManagerConfigurationMethod(string $clazz, string $method, array $params)
+    private static function callConfigManagerConfigurationMethod(string $blueprint, string $method, array $params)
     {
-        $reflectionMethod = new \ReflectionMethod($clazz, $method);
+        $reflectionMethod = new \ReflectionMethod($blueprint, $method);
         $required_parameters = array_filter($reflectionMethod->getParameters(), static function ($p) {
             return !$p->isOptional();
         });
         if (\count($params) < \count($required_parameters)) {
-            throw new \RuntimeException(sprintf('Configuration methods signature incorrectly defined for %s', $clazz));
+            throw new \RuntimeException(sprintf('Configuration methods signature incorrectly defined for %s', $blueprint));
         }
         if ($reflectionMethod->isStatic() && $reflectionMethod->isPublic()) {
             return $reflectionMethod->invoke(null, ...$params);

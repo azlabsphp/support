@@ -18,8 +18,6 @@ class NotImplementedMethodException extends \Exception
     /**
      * Creates a {@see NotImplementedMethodException} instance.
      *
-     * @param string $method
-     *
      * @return static
      */
     public function __construct(string $method)

@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Drewlabs\Support\Tests\Stubs;
 
+use Drewlabs\Core\Helpers\Reflector;
 use Drewlabs\Support\Traits\ImmutableConfigurationManager;
 
 class ConfigurationManagerStub2
@@ -21,7 +22,7 @@ class ConfigurationManagerStub2
 
     public static function customConfigure(array $config, string $other_params)
     {
-        $self = drewlabs_core_create_attribute_setter('config', $config ?? [])(new static());
+        $self = Reflector::propertySetter('config', $config ?? [])(new static());
         static::$instance = $self;
 
         return $self;

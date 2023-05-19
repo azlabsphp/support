@@ -37,10 +37,7 @@ class Argument implements SupportFuncArgument
     private $type;
 
     /**
-     * Creates class instance
-     * 
-     * @param string $type 
-     * @param string $state 
+     * Creates class instance.
      */
     public function __construct(string $type = AbstractTypes::ANY, string $state = ArgumentType::REQUIRED)
     {

@@ -28,7 +28,7 @@ trait MethodProxy
      *
      * @return mixed
      */
-    public function call($method, $args = [], ?\Closure $default = null)
+    public function call($method, $args = [], \Closure $default = null)
     {
         if ($method instanceof \Closure) {
             try {

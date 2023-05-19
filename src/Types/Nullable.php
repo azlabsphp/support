@@ -26,10 +26,10 @@ class Nullable
     private $default;
 
     /**
-     * Creates class instance
-     * 
-     * @param mixed $value 
-     * @param mixed $default 
+     * Creates class instance.
+     *
+     * @param mixed $value
+     * @param mixed $default
      */
     public function __construct($value, $default = null)
     {

@@ -16,9 +16,7 @@ namespace Drewlabs\Support\Exceptions;
 class UnsupportedConfigurationFileException extends \Exception
 {
     /**
-     * Creates class instance
-     * 
-     * @param array $extensions 
+     * Creates class instance.
      */
     public function __construct(array $extensions = [])
     {

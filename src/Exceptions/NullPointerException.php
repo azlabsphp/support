@@ -16,9 +16,7 @@ namespace Drewlabs\Support\Exceptions;
 class NullPointerException extends \Exception
 {
     /**
-     * Creates class instance
-     * 
-     * @param string $property 
+     * Creates class instance.
      */
     public function __construct(string $property)
     {

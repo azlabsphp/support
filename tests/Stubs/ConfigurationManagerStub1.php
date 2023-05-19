@@ -18,12 +18,4 @@ use Drewlabs\Support\Traits\ImmutableConfigurationManager;
 class ConfigurationManagerStub1
 {
     use ImmutableConfigurationManager;
-
-    public static function configure(array $config = [])
-    {
-        $self = drewlabs_core_create_attribute_setter('config', $config ?? [])(new static());
-        static::$instance = $self;
-
-        return $self;
-    }
 }

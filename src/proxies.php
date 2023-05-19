@@ -13,12 +13,10 @@ declare(strict_types=1);
 
 namespace Drewlabs\Support\Proxy;
 
-use Drewlabs\Contracts\Support\DataTransfertObject\QueryResultInterface;
+use Drewlabs\Collections\Collection;
+use Drewlabs\Collections\Streams\Stream;
 use Drewlabs\Support\Actions\Action;
 use Drewlabs\Support\Actions\ActionResult;
-use Drewlabs\Support\Collections\SimpleCollection;
-use Drewlabs\Support\Collections\Stream;
-use Drewlabs\Support\Compact\DataTransfertObjectBridge;
 use Drewlabs\Support\Tree\TreeView;
 use Drewlabs\Support\XML\XMLAttribute;
 use Drewlabs\Support\XML\XMLElement;
@@ -77,7 +75,7 @@ function ActionResult($value = null)
  *
  * @return XMLElement
  */
-function XMLElement(string $name, $value = '', string $ns = '', $attributes = [], ?string $xmlns = null)
+function XMLElement(string $name, $value = '', string $ns = '', $attributes = [], string $xmlns = null)
 {
     return new XMLElement($name, $value, $ns, $attributes, $xmlns);
 }
@@ -98,13 +96,13 @@ function XMLAttribute(string $name, $value = '')
 
 // region Data structures
 /**
- * Provides a proxy interface to {@link SimpleCollection} class constructor.
+ * Provides a proxy interface to {@link Collection} class constructor.
  *
- * @return SimpleCollection
+ * @return Collection
  */
 function Collection($items = [])
 {
-    return new SimpleCollection($items);
+    return new Collection($items);
 }
 
 /**

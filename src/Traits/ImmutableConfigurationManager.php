@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace Drewlabs\Support\Traits;
 
+use Drewlabs\Core\Helpers\Arr;
+use Drewlabs\Core\Helpers\Reflector;
+
 /**
  * Class that uses this mixin should define a method for loading the and transforming the configurations into array.
  */
@@ -39,15 +42,25 @@ trait ImmutableConfigurationManager
     {
     }
 
+    /**
+     * Return the singleton instance.
+     *
+     * @return self
+     */
     public static function getInstance()
     {
-        if (null === static::$instance) {
-            $self = new static();
-            $self = drewlabs_core_create_attribute_setter('config', $self->config ?? [])($self);
-            static::$instance = $self;
+        if (null === self::$instance) {
+            self::$instance = Reflector::propertySetter('config', [])(new self());
         }
 
-        return static::$instance;
+        return self::$instance;
+    }
+
+    public static function configure(array $config = [])
+    {
+        $self = Reflector::propertySetter('config', $config ?? [])(new self());
+
+        return self::$instance = $self;
     }
 
     public function get($key = null, $default = null)
@@ -55,9 +68,8 @@ trait ImmutableConfigurationManager
         if (null === $key) {
             return array_merge($this->config, []);
         }
-        $value = drewlabs_core_array_get($this->config, $key, $default);
 
-        return null === $value ? ($default instanceof \Closure ? $default() : $default) : $value;
+        return null === ($value = Arr::get($this->config, $key, $default)) ? ($default instanceof \Closure ? $default() : $default) : $value;
     }
 
     /**
@@ -66,7 +78,7 @@ trait ImmutableConfigurationManager
     #[\ReturnTypeWillChange]
     public function offsetExists($offset)
     {
-        return null !== drewlabs_core_array_get($offset, null);
+        return null !== Arr::get($offset, null);
     }
 
     /**
@@ -84,7 +96,7 @@ trait ImmutableConfigurationManager
     #[\ReturnTypeWillChange]
     public function offsetSet($offset, $value)
     {
-        throw new \RuntimeException('Configuration manager class is a readonly class, operations changing the class state are not allowed');
+        throw new \RuntimeException('Configuration manager class is a readonly class, changing it state is not allowed');
     }
 
     /**
@@ -93,6 +105,6 @@ trait ImmutableConfigurationManager
     #[\ReturnTypeWillChange]
     public function offsetUnset($offset)
     {
-        throw new \RuntimeException('Configuration manager class is a readonly class, operations changing the class state are not allowed');
+        throw new \RuntimeException('Configuration manager class is a readonly class, ]changing it state is not allowed');
     }
 }

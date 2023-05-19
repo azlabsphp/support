@@ -16,9 +16,7 @@ namespace Drewlabs\Support\Exceptions;
 class UnConfiguredClassInstanceException extends \Exception
 {
     /**
-     * Creates new class instance
-     * 
-     * @param string $blueprint 
+     * Creates new class instance.
      */
     public function __construct(string $blueprint)
     {

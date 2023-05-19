@@ -40,11 +40,7 @@ class NamedArgument implements NamedFuncArgumentInterface
     private $name;
 
     /**
-     * Creates class instance
-     * 
-     * @param string $name 
-     * @param string $type 
-     * @param string $state 
+     * Creates class instance.
      */
     public function __construct(string $name = 'unknown', string $type = AbstractTypes::ANY, string $state = ArgumentType::REQUIRED)
     {
