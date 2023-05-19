@@ -44,3 +44,10 @@
 ## [2.4.0]
 
 - From version 2.4.x, `$action->payload()` calls returns an instance of `ActionPayload` instead of `array` in previous version
+
+**Note** Version 0.2.x is a rewriting packagist version of v2.x which was a private library package.
+
+## [0.2.0] 2023-05-19
+
+- Removed XML and Collections implementations
+- Removed ValueObject, DTO object and bridge implementations

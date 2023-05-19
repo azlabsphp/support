@@ -5,6 +5,5 @@
 
 ## Revision 3010
 
-- Move XML handlers to a dedicated package that handles XML and HTML []
-- Move Collection Library to a decicated library []
-- Move Tree View implementation into a dedicated package []
+- Move XML handlers to a dedicated package that handles XML and HTML [ x ]
+- Move Collection Library to a decicated library [ x ]
