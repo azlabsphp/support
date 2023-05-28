@@ -13,10 +13,10 @@ declare(strict_types=1);
 
 namespace Drewlabs\Support\Actions;
 
-use Drewlabs\Contracts\Support\Actions\Action as ActionInterface;
-use Drewlabs\Contracts\Support\ArrayableInterface;
+use Drewlabs\Contracts\Support\Actions\Action as AbstractAction;
+use Drewlabs\Contracts\Support\Arrayable;
 
-class Action implements ActionInterface, \JsonSerializable, ArrayableInterface
+class Action implements AbstractAction, \JsonSerializable, Arrayable
 {
     /**
      * Action type property.

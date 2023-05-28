@@ -13,8 +13,8 @@ declare(strict_types=1);
 
 namespace Drewlabs\Support\Actions;
 
-use Drewlabs\Contracts\Support\Actions\ActionResult as ActionResultInterface;
-use Drewlabs\Contracts\Support\ArrayableInterface;
+use Drewlabs\Contracts\Support\Actions\ActionResult as AbstractActionResult;
+use Drewlabs\Contracts\Support\Arrayable;
 use Drewlabs\Support\Traits\MethodProxy;
 
 /**
@@ -22,7 +22,7 @@ use Drewlabs\Support\Traits\MethodProxy;
  * that will be easilly serializable to the value it wrapp.
  *
  * */
-class ActionResult implements ActionResultInterface, \JsonSerializable, ArrayableInterface
+class ActionResult implements AbstractActionResult, \JsonSerializable, Arrayable
 {
     use MethodProxy;
 

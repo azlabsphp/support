@@ -13,9 +13,9 @@ declare(strict_types=1);
 
 namespace Drewlabs\Support\Actions;
 
-use Drewlabs\Contracts\Support\Actions\ActionPayload as PayloadInterface;
+use Drewlabs\Contracts\Support\Actions\ActionPayload as AbstractPayload;
 
-class ActionPayload implements PayloadInterface
+class ActionPayload implements AbstractPayload
 {
     /**
      * Payload values property.
