@@ -18,8 +18,6 @@ use Drewlabs\Collections\Streams\Stream;
 use Drewlabs\Support\Actions\Action;
 use Drewlabs\Support\Actions\ActionResult;
 use Drewlabs\Support\Tree\TreeView;
-use Drewlabs\Support\XML\XMLAttribute;
-use Drewlabs\Support\XML\XMLElement;
 
 /**
  * Provides a proxy interface to {@link Action} class constructor.
@@ -32,9 +30,6 @@ use Drewlabs\Support\XML\XMLElement;
  * $action = Action(['type' => 'SELECT', 'payload' => []]);
  * ```
  *
- * **Note**
- * From version 2.4.x the API provides an overloaded interface, allowing developper to
- * pass payload as a variadic parameter and a string action type
  *
  * ```php
  * use function Drewlabs\Support\Proxy\Action;
@@ -53,7 +48,6 @@ function Action($type = [], ...$payload)
     if (\is_string($type)) {
         return Action::create($type, ...$payload);
     }
-
     return new Action($type);
 }
 
@@ -66,33 +60,6 @@ function ActionResult($value = null)
 {
     return new ActionResult($value);
 }
-
-/**
- * Provides a proxy interface to {@link XMLElement} class constructor.
- *
- * @param string|XMLElement|null  $value
- * @param array|XMLAttribute|null $attributes
- *
- * @return XMLElement
- */
-function XMLElement(string $name, $value = '', string $ns = '', $attributes = [], string $xmlns = null)
-{
-    return new XMLElement($name, $value, $ns, $attributes, $xmlns);
-}
-
-/**
- * Provides a proxy interface to {@link XMLAttribute} class constructor.
- *
- * @param string $value
- *
- * @return XMLAttribute
- */
-function XMLAttribute(string $name, $value = '')
-{
-    return new XMLAttribute($name, $value);
-}
-
-// Value object proxies
 
 // region Data structures
 /**
