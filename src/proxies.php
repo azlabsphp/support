@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * This file is part of the Drewlabs package.
+ * This file is part of the drewlabs namespace.
  *
  * (c) Sidoine Azandrew <azandrewdevelopper@gmail.com>
  *
@@ -48,6 +48,7 @@ function Action($type = [], ...$payload)
     if (\is_string($type)) {
         return Action::create($type, ...$payload);
     }
+
     return new Action($type);
 }
 

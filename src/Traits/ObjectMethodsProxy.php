@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * This file is part of the Drewlabs package.
+ * This file is part of the drewlabs namespace.
  *
  * (c) Sidoine Azandrew <azandrewdevelopper@gmail.com>
  *
@@ -41,7 +41,7 @@ trait ObjectMethodsProxy
             if (!preg_match($pattern, $e->getMessage(), $matches)) {
                 throw $e;
             }
-            if ($matches['class'] !== \get_class($object) || $matches['method'] !== $method) {
+            if ($matches['class'] !== $object::class || $matches['method'] !== $method) {
                 throw $e;
             }
             throw new \BadMethodCallException(sprintf('Call to undefined method %s::%s()', static::class, $method));

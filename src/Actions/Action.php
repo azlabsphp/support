@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * This file is part of the Drewlabs package.
+ * This file is part of the drewlabs namespace.
  *
  * (c) Sidoine Azandrew <azandrewdevelopper@gmail.com>
  *
@@ -14,9 +14,8 @@ declare(strict_types=1);
 namespace Drewlabs\Support\Actions;
 
 use Drewlabs\Contracts\Support\Actions\Action as AbstractAction;
-use Drewlabs\Contracts\Support\Arrayable;
 
-class Action implements AbstractAction, \JsonSerializable, Arrayable
+class Action implements AbstractAction, \JsonSerializable
 {
     /**
      * Action type property.
@@ -63,13 +62,6 @@ class Action implements AbstractAction, \JsonSerializable, Arrayable
         return $this->type;
     }
 
-    /**
-     * **Note**
-     * From version 2.4.x, `$action->payload()` calls returns an instance of `ActionPayload`
-     * instead of `array` in previous version.
-     *
-     * {@inheritDoc}
-     */
     public function payload()
     {
         return $this->payload;

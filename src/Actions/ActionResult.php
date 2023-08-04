@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * This file is part of the Drewlabs package.
+ * This file is part of the drewlabs namespace.
  *
  * (c) Sidoine Azandrew <azandrewdevelopper@gmail.com>
  *
@@ -14,7 +14,6 @@ declare(strict_types=1);
 namespace Drewlabs\Support\Actions;
 
 use Drewlabs\Contracts\Support\Actions\ActionResult as AbstractActionResult;
-use Drewlabs\Contracts\Support\Arrayable;
 use Drewlabs\Support\Traits\MethodProxy;
 
 /**
@@ -22,7 +21,7 @@ use Drewlabs\Support\Traits\MethodProxy;
  * that will be easilly serializable to the value it wrapp.
  *
  * */
-class ActionResult implements AbstractActionResult, \JsonSerializable, Arrayable
+class ActionResult implements AbstractActionResult, \JsonSerializable
 {
     use MethodProxy;
 

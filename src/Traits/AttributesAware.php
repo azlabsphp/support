@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * This file is part of the Drewlabs package.
+ * This file is part of the drewlabs namespace.
  *
  * (c) Sidoine Azandrew <azandrewdevelopper@gmail.com>
  *
@@ -85,6 +85,30 @@ trait AttributesAware
         foreach ($this->attributes as $key => $value) {
             yield $key => $value;
         }
+    }
+
+    /**
+     * Returns the value of an attribute in the object.
+     *
+     * @param mixed $default
+     *
+     * @return mixed
+     */
+    public function getAttribute(string $name, $default = null)
+    {
+        return Arr::get($this->attributes ?? [], $name, $default);
+    }
+
+    /**
+     * Set the value of an attribute in the data storage.
+     *
+     * @param mixed $value
+     *
+     * @return void
+     */
+    public function setAttribute(string $name, $value)
+    {
+        return Arr::get($this->attributes, $name, $value);
     }
 
     private static function validateConstructorFirstParameter(\ReflectionParameter $parameter)
