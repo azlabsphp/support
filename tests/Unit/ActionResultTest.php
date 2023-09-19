@@ -45,4 +45,13 @@ class ActionResultTest extends TestCase
         $actionResult = ActionResult(new ActionResultValueStub());
         $this->assertTrue($actionResult->exists());
     }
+
+    public function test_action_result_has_value()
+    {
+        $result = ActionResult(null);
+        $this->assertFalse($result->hasValue());
+
+        $result = ActionResult(new \stdClass());
+        $this->assertTrue($result->hasValue());
+    }
 }

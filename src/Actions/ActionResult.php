@@ -86,6 +86,11 @@ class ActionResult implements AbstractActionResult, \JsonSerializable
         return $this->value;
     }
 
+    public function hasValue(): bool
+    {
+        return null !== $this->value;
+    }
+
     public function toArray()
     {
         return ['value' => $this->value];
