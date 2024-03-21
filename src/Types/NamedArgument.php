@@ -16,6 +16,9 @@ namespace Drewlabs\Support\Types;
 use Drewlabs\Contracts\Support\NamedFuncArgument as NamedFuncArgumentInterface;
 use Drewlabs\Support\Types\Traits\Argument;
 
+/**
+ * @deprecated
+ */
 class NamedArgument implements NamedFuncArgumentInterface
 {
     use Argument;

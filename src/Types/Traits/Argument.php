@@ -15,6 +15,9 @@ namespace Drewlabs\Support\Types\Traits;
 
 use Drewlabs\Support\Types\ArgumentType;
 
+/**
+ * @deprecated
+ */
 trait Argument
 {
     public function isOptional(): bool

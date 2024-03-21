@@ -13,12 +13,14 @@ declare(strict_types=1);
 
 namespace Drewlabs\Support\Types;
 
-use Drewlabs\Contracts\Support\FuncArgument as SupportFuncArgument;
-use Drewlabs\Support\Types\Traits\Argument as TraitsFuncArgument;
+use Drewlabs\Support\Types\Traits\Argument as ArgumentTrait;
 
-class Argument implements SupportFuncArgument
+/**
+ * @deprecated
+ */
+class Argument
 {
-    use TraitsFuncArgument;
+    use ArgumentTrait;
 
     /**
      * Parameter holding the state of the parameter.

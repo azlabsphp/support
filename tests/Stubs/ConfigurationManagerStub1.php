@@ -13,9 +13,9 @@ declare(strict_types=1);
 
 namespace Drewlabs\Support\Tests\Stubs;
 
-use Drewlabs\Support\Traits\ImmutableConfigurationManager;
+use Drewlabs\Support\Traits\ImmutableConfig;
 
 class ConfigurationManagerStub1
 {
-    use ImmutableConfigurationManager;
+    use ImmutableConfig;
 }

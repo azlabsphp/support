@@ -14,11 +14,11 @@ declare(strict_types=1);
 namespace Drewlabs\Support\Tests\Stubs;
 
 use Drewlabs\Core\Helpers\Reflector;
-use Drewlabs\Support\Traits\ImmutableConfigurationManager;
+use Drewlabs\Support\Traits\ImmutableConfig;
 
 class ConfigurationManagerStub2
 {
-    use ImmutableConfigurationManager;
+    use ImmutableConfig;
 
     public static function customConfigure(array $config, string $other_params)
     {
