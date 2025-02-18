@@ -190,7 +190,7 @@ class Normalizer
         return (string) array_pop($arr);
     }
 
-    public static function getCompleteUseStatement(string $useName, string $useAlias = null): string
+    public static function getCompleteUseStatement(string $useName, ?string $useAlias = null): string
     {
         $use = $useName;
         if (null !== $useAlias && '' !== $useAlias) {

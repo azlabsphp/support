@@ -60,7 +60,7 @@ trait Node
         return null === $this->__PARENT__;
     }
 
-    public function childNodes(array $values = null)
+    public function childNodes(?array $values = null)
     {
         if (null !== $values) {
             $this->__CHILDREN__ = $values;

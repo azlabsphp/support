@@ -22,12 +22,12 @@ namespace Drewlabs\Support\Traits;
  */
 trait ObjectMethodsProxy
 {
-    public function forwardCallTo($object, $method, $args = [], \Closure $default = null)
+    public function forwardCallTo($object, $method, $args = [], ?\Closure $default = null)
     {
         return $this->proxy($object, $method, $args, $default);
     }
 
-    public function proxy($object, $method, $args = [], \Closure $default = null)
+    public function proxy($object, $method, $args = [], ?\Closure $default = null)
     {
         try {
             // Call the method on the provided object

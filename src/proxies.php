@@ -76,7 +76,7 @@ function Collection($items = [])
 /**
  * Creates a stream object from source elements.
  *
- * @param array|\iterable|\Iterator $source
+ * @param array|iterable|\Iterator $source
  *
  * @return Stream
  */

@@ -22,13 +22,12 @@ trait MethodProxy
      * if the specified method does not exists, the default method is called
      * instead.
      *
-     * @param mixed    $method
-     * @param array    $args
-     * @param \Closure $default
+     * @param mixed $method
+     * @param array $args
      *
      * @return mixed
      */
-    public function call($method, $args = [], \Closure $default = null)
+    public function call($method, $args = [], ?\Closure $default = null)
     {
         if ($method instanceof \Closure) {
             try {

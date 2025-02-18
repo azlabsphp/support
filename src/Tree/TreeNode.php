@@ -22,7 +22,7 @@ interface TreeNode extends \JsonSerializable, NodeElement
      *
      * @return self[]
      */
-    public function childNodes(array $values = null);
+    public function childNodes(?array $values = null);
 
     /**
      * Getter and Setter Zero based level of the node in the tree structure.
